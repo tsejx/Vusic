@@ -1,16 +1,15 @@
 <template>
     <div>
-        Hello world!
+        Singer
     </div>
 </template>
 
 <script>
 export default {
-  name: 'm-header'
+
 }
 </script>
 
 <style>
 
 </style>
-
