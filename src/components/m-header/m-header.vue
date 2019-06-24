@@ -1,7 +1,7 @@
 <template>
     <div class="m-header">
         <div class="icon"></div>
-        <h1 class="text">Solar Music</h1>
+        <h1 class="header-title">Solar Music</h1>
     </div>
 </template>
 
@@ -30,10 +30,10 @@ export default {
     margin-right: 9px
     bg-image('logo')
     background-size: 30px 32px
-  .text
+  .header-title
     display: inline-block
     vertical-align: top
-    line-weight: 44px
+    line-height: 44px
     font-size: $font-size-lg
   .mine
     position: absolute
