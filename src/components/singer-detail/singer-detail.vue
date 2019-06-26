@@ -6,10 +6,10 @@
 
 <script type="text/ecmascript-6">
 import { mapGetters } from 'vuex';
-import { getSingerDetail } from 'api/singer';
 import { ERR_OK } from 'api/config';
-import { createSong } from 'common/js/song';
-import MusicList from 'components/music-list/music-list'
+import { getSingerDetail } from 'api/singer';
+import { createSong, injectSongUrl } from 'common/js/song';
+import MusicList from 'components/music-list/music-list';
 
 export default {
   data() {
@@ -19,10 +19,10 @@ export default {
   },
   computed: {
     title() {
-      return this.singer.name
+      return this.singer.name;
     },
     bgImage() {
-      return this.singer.avatar
+      return this.singer.avatar;
     },
     ...mapGetters(['singer']),
   },
@@ -35,9 +35,7 @@ export default {
       }
       getSingerDetail(this.singer.id).then(res => {
         if (ERR_OK === res.code) {
-          console.log(res.data.list);
-          this.songs = this.normalizeSongData(res.data.list);
-          console.log(this.songs);
+          injectSongUrl(this.normalizeSongData(res.data.list)).then(songs => (this.songs = songs));
         }
       });
     },
@@ -53,12 +51,11 @@ export default {
     },
   },
   created() {
-    console.log(this.singer);
     this.loadData();
   },
   components: {
-    MusicList
-  }
+    MusicList,
+  },
 };
 </script>
 

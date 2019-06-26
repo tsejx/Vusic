@@ -23,7 +23,7 @@
       ref="list"
     >
       <div class="song-list-wrapper">
-        <song-list :songs="songs"></song-list>
+        <song-list :songs="songs" @select="onSelectItem"></song-list>
       </div>
       <div v-show="!songs.length" class="loading-container">
         <loading></loading>
@@ -37,6 +37,7 @@ import Scroll from 'base/scroll/scroll';
 import SongList from 'base/song-list/song-list';
 import Loading from 'base/loading/loading';
 import { prefixStyle } from 'common/js/dom';
+import { mapActions } from 'vuex';
 
 const transform = prefixStyle('transform');
 const backdrop = prefixStyle('backdrop-filter');
@@ -76,6 +77,15 @@ export default {
       this.$router.go(-1);
     },
     onRandomPlay() {},
+    onSelectItem(item, index) {
+      this.selectPlay({
+        list: this.songs,
+        index
+      })
+    },
+    ...mapActions([
+      'selectPlay'
+    ])
   },
   created() {
     this.probeType = 3;

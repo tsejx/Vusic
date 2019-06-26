@@ -1,3 +1,5 @@
+import { getSongsUrl } from 'api/songs'
+
 export default class Song {
   constructor({ id, mid, singer, name, album, duration, image, url }) {
     this.id = id;
@@ -41,4 +43,21 @@ export function isValidMusic(musicData) {
   return (
     musicData.songid && musicData.albummid && (!musicData.pay || musicData.pay.payalbumprice === 0)
   );
+}
+
+export function injectSongUrl(songs) {
+  if (!songs.length) {
+    return Promise.resolbe(songs)
+  }
+  return getSongsUrl(songs).then((purlMap) => {
+    songs = songs.filter((song) => {
+      const purl = purlMap[song.mid]
+      if (purl) {
+        song.url = purl.indexOf('http') === -1 ? `http://dl.stream.qqmusic.qq.com/${purl}` : purl;
+        return true
+      }
+      return false
+    })
+    return songs
+  })
 }
