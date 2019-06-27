@@ -16,7 +16,7 @@
         <div class="recommend-list">
           <h1 class="recommend-header">热门歌单推荐</h1>
           <ul>
-            <li v-for="item of discList" class="recommend-item" :key="item.id">
+            <li v-for="item of discList" class="recommend-item" :key="item.id" @click="onSelectItem(item)">
               <div class="recommend-icon">
                 <img width="60" height="60" v-lazy="item.picUrl">
               </div>
@@ -32,10 +32,12 @@
         <loading></loading>
       </div>
     </scroll>
+    <router-view></router-view>
   </div>
 </template>
 
 <script type="ecmascript-6">
+import { mapMutations } from 'vuex'
 import Slider from 'base/slider/slider';
 import Scroll from 'base/scroll/scroll';
 import Loading from 'base/loading/loading';
@@ -58,6 +60,12 @@ export default {
     }, 2000);
   },
   methods: {
+    onSelectItem(item) {
+      this.$router.push({
+        path: `/recommend/${item.id}`,
+      })
+      this.setDiscList(item);
+    },
     handlePlayList(playlist) {
       const bottom = playlist.length > 0 ? '60px' : '';
       this.$refs.recommend.style.bottom = bottom;
@@ -79,6 +87,9 @@ export default {
         }, 20);
       }
     },
+    ...mapMutations({
+      setDiscList: 'SET_DISC_LIST'
+    })
   },
   components: {
     slider: Slider,

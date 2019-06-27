@@ -6,12 +6,13 @@ import Rank from 'components/rank/rank';
 import Search from 'components/search/search';
 import Singer from 'components/singer/singer';
 // import SingerDetail from 'components/singer-detail/singer-detail'
+import Playlist from 'components/playlist/playlist';
 
 // 注册vue-router插件
 Vue.use(Router);
 
-const Recommend = () => import('components/recommend/recommend')
-const SingerDetail = () => import('components/singer-detail/singer-detail')
+const Recommend = () => import('components/recommend/recommend');
+const SingerDetail = () => import('components/singer-detail/singer-detail');
 
 export default new Router({
   routes: [
@@ -20,9 +21,15 @@ export default new Router({
       redict: '/recommend',
     },
     {
-      path: '/recommend',
       name: 'recommend',
+      path: '/recommend',
       component: Recommend,
+      children: [
+        {
+          path: ':id',
+          component: Playlist,
+        },
+      ],
     },
     {
       name: 'singer',
@@ -31,9 +38,9 @@ export default new Router({
       children: [
         {
           path: ':id',
-          component: SingerDetail
-        }
-      ]
+          component: SingerDetail,
+        },
+      ],
     },
     {
       path: '/rank',
