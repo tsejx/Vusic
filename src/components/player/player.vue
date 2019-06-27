@@ -7,10 +7,12 @@
       @leave="leave"
       @after-leave="afterLeave"
     >
-      <div class="normal-player" v-show="fullScreen">
+      <div class="normal-player" v-show="isFullScreen">
+        <!-- 背景 -->
         <div class="background">
           <img width="100%" height="100%" :src="currentSong.image">
         </div>
+        <!-- 页面顶部 -->
         <div class="top">
           <div class="back" @click="onBack">
             <i class="icon-back"></i>
@@ -18,20 +20,46 @@
           <h1 class="title" v-html="currentSong.name"></h1>
           <h2 class="subtitle" v-html="currentSong.singer"></h2>
         </div>
-        <div class="middle">
-          <div class="middle-l">
+        <!-- 页面中部 -->
+        <div
+          class="middle"
+          @touchstart.prevent="onTouchStart"
+          @touchmove.prevent="onTouchMove"
+          @touchend="onTouchEnd"
+        >
+          <!-- 唱片封面 -->
+          <div class="middle-record" ref="recordCover">
             <div class="record-wrapper" ref="recordWrapper">
-              <div class="record" ref="record">
+              <div class="record" ref="recordCoverWrapper">
                 <img class="image" ref="image" :class="recordRotate" :src="currentSong.image">
               </div>
             </div>
+            <div class="playing-lyric-wrapper">
+              <div class="playing-lyric">{{playingLyric}}</div>
+            </div>
           </div>
+          <!-- 歌词 -->
+          <scroll class="middle-lyric" ref="lyricList" :data="currentLyric && currentLyric.lines">
+            <div class="lyric-wrapper">
+              <div v-if="currentLyric">
+                <p
+                  class="text"
+                  ref="lyricLine"
+                  v-for="(line, index) of currentLyric.lines"
+                  :class="{'current': currentLine === index}"
+                  :key="index"
+                >{{line.txt}}</p>
+              </div>
+            </div>
+          </scroll>
         </div>
+        <!-- 页面底部 -->
         <div class="bottom">
           <div class="dot-wrapper">
-            <span class="dot"></span>
-            <span class="dot"></span>
+            <span class="dot" :class="{'active': currentShow === 'record'}"></span>
+            <span class="dot" :class="{'active': currentShow === 'lyric'}"></span>
           </div>
+          <!-- 进度栏 -->
           <div class="progress-wrapper">
             <span class="time time-left">{{format(currentTime)}}</span>
             <div class="progress-bar-wrapper">
@@ -39,9 +67,10 @@
             </div>
             <span class="time time-right">{{format(currentSong.duration)}}</span>
           </div>
+          <!-- 控制台 -->
           <div class="operators">
-            <div class="icon i-left">
-              <i class="icon-sequence"></i>
+            <div class="icon i-left" @click="onModeChange">
+              <i :class="modeIcon"></i>
             </div>
             <div class="icon i-left" :class="disabeldCls">
               <i class="icon-prev" @click="onPrev"></i>
@@ -59,25 +88,30 @@
         </div>
       </div>
     </transition>
+    <!-- 迷你播放器 -->
     <transition name="mini">
-      <div class="mini-player" v-show="!fullScreen" @click="onOpen">
+      <div class="mini-player" v-show="!isFullScreen" @click="onOpen">
         <div class="icon">
-          <div class="imgWrapper" ref="miniWrapper">
+          <div class="imgWrapper" ref="miniCoverWrapper">
             <img
               width="40"
               height="40"
-              ref="minImage"
+              ref="miniImage"
+              class="image"
               :class="recordRotate"
               :src="currentSong.image"
             >
           </div>
         </div>
+        <!-- 歌曲信息 -->
         <div class="text">
           <h2 class="name" v-html="currentSong.name"></h2>
           <p class="desc" v-html="currentSong.singer"></p>
         </div>
         <div class="control">
-          <i :class="miniIcon" @click.stop="onToggle"></i>
+          <progress-circle :radius="32" :percent="percent">
+            <i class="icon-mini" :class="miniIcon" @click.stop="onToggle"></i>
+          </progress-circle>
         </div>
         <div class="control">
           <i class="icon-playlist"></i>
@@ -90,6 +124,7 @@
       @canplay="onReady"
       @error="onError"
       @timeupdate="updateTime"
+      @ended="onEnd"
     ></audio>
   </div>
 </template>
@@ -97,16 +132,26 @@
 <script type="text/ecmascript-6">
 import { mapGetters, mapMutations } from 'vuex';
 import animations from 'create-keyframe-animation';
+import Lyric from 'lyric-parser';
 import { prefixStyle } from 'common/js/dom';
+import { playMode } from 'common/js/config';
+import { shuffle } from 'common/js/util';
+import Scroll from 'base/scroll/scroll';
 import ProgressBar from 'base/progress-bar/progress-bar';
+import ProgressCircle from 'base/progress-circle/progress-circle';
 
 const transform = prefixStyle('transform');
+const transitionDuration = prefixStyle('transitionDuration');
 
 export default {
   data() {
     return {
       canPlay: false,
       currentTime: 0,
+      currentLyric: null,
+      currentLine: 0,
+      currentShow: 'record',
+      playingLyric: '',
     };
   },
   computed: {
@@ -117,7 +162,14 @@ export default {
       return this.playing ? 'icon-pause' : 'icon-play';
     },
     miniIcon() {
-      return this.palying ? 'icon-pause-mini' : 'icon-play-mini';
+      return this.playing ? 'icon-pause-mini' : 'icon-play-mini';
+    },
+    modeIcon() {
+      return this.mode === playMode.sequence
+        ? 'icon-sequence'
+        : this.mode === playMode.loop
+        ? 'icon-loop'
+        : 'icon-random';
     },
     disabeldCls() {
       return this.canPlay ? '' : 'disable';
@@ -125,48 +177,163 @@ export default {
     percent() {
       return this.currentTime / this.currentSong.duration;
     },
-    ...mapGetters(['fullScreen', 'playlist', 'currentSong', 'playing', 'currentIndex']),
+    ...mapGetters([
+      'isFullScreen',
+      'playlist',
+      'currentSong',
+      'playing',
+      'currentIndex',
+      'mode',
+      'sequenceList',
+    ]),
   },
   watch: {
-    currentSong() {
-      this.$nextTick(() => {
+    currentSong(newSong, oldSong) {
+      if (newSong.id === oldSong.id) {
+        return;
+      }
+      if (this.currentLyric) {
+        this.currentLyric.stop();
+      }
+      setTimeout(() => {
         this.$refs.audio.play();
-      });
+        this.getSongLyric();
+      }, 1000);
     },
     playing(newPlaying) {
+      if (!this.canPlay) {
+        return;
+      }
       const audio = this.$refs.audio;
       this.$nextTick(() => {
         newPlaying ? audio.play() : audio.pause();
       });
+      if (!newPlaying) {
+        if (this.isFullScreen) {
+          this.syncWrapperTransform('recordCoverWrapper', 'image');
+        } else {
+          this.syncWrapperTransform('miniCoverWrapper', 'miniImage');
+        }
+      }
     },
   },
   methods: {
+    onTouchStart(e) {
+      this.touch.initiated = true;
+      // 用来判断是否是一次移动
+      this.touch.moved = false;
+      const touch = e.touches[0];
+      this.touch.startX = touch.pageX;
+      this.touch.startY = touch.pageY;
+    },
+    onTouchMove(e) {
+      if (!this.touch.initiated) {
+        return;
+      }
+      const touch = e.touches[0];
+      const deltaX = touch.pageX - this.touch.startX;
+      const deltaY = touch.pageY - this.touch.startY;
+
+      // 纵向滚动时忽略，因为与歌词滚动冲突
+      if (Math.abs(deltaY) > Math.abs(deltaX)) {
+        return;
+      }
+      if (!this.touch.moved) {
+        this.touch.moved = true
+      }
+      const left = this.currentShow === 'record' ? 0 : -window.innerWidth;
+      const offsetWidth = Math.min(0, Math.max(-window.innerWidth, left + deltaX));
+      this.touch.percent = Math.abs(offsetWidth / window.innerWidth);
+      this.$refs.lyricList.$el.style[transform] = `translate3d(${offsetWidth},0,0)`;
+      this.$refs.lyricList.$el.style[transitionDuration] = 0
+      this.$refs.recordCover.style.opacity = 1 - this.touch.percent;
+      this.$refs.recordCover.style[transitionDuration] = 0;
+    },
+    onTouchEnd(e) {
+      if (!this.touch.moved) {
+        return
+      }
+      let offsetWidth;
+      let opacity;
+      if (this.currentShow === 'record') {
+        if (this.touch.percent > 0.1) {
+          offsetWidth = -window.innerWidth;
+          opacity = 0;
+          this.currentShow = 'lyric';
+        } else {
+          offsetWidth = 0;
+          opacity = 1;
+        }
+      } else {
+        if (this.touch.percent < 0.9) {
+          offsetWidth = 0;
+          this.currentShow = 'record';
+          opacity = 1;
+        } else {
+          offsetWidth = -window.innerWidth;
+          opacity = 0;
+        }
+      }
+      const time = 300;
+      this.$refs.lyricList.$el.style[transform] = `translate3d(${offsetWidth}px,0,0)`;
+      this.$refs.lyricList.$el.style[transitionDuration] = `${time}ms`;
+      this.$refs.recordCover.style.opacity = opacity;
+      this.$refs.recordCover.style[transitionDuration] = `${time}ms`;
+      this.touch.initiated = false
+    },
     onBack() {
       this.setFullScreen(false);
     },
     onOpen() {
       this.setFullScreen(true);
     },
+    onModeChange() {
+      const mode = (this.mode + 1) % 3;
+      this.setPlayMode(mode);
+      let list = null;
+      if (mode === playMode.random) {
+        list = shuffle(this.sequenceList);
+      } else {
+        list = this.sequenceList;
+      }
+      this.resetCurrentIndex(list);
+      this.setPlayList(list);
+    },
     onNext() {
       if (!this.canPlay) {
         return;
       }
-      let index = this.currentIndex + 1;
-      if (index === this.playlist.length) {
-        index = 0;
-      }
-      this.setCurrentIndex(index);
-      if (!this.playing) {
-        this.onToggle();
+      if (this.playlist.length === 1) {
+        this.onLoop();
+      } else {
+        let index = this.currentIndex + 1;
+        if (index === this.playlist.length) {
+          index = 0;
+        }
+        this.setCurrentIndex(index);
+        if (!this.playing) {
+          this.onToggle();
+        }
       }
       this.canPlay = false;
     },
     onPrev() {
-      let index = this.currentIndex - 1;
-      if (index === -1) {
-        index = this.playlist.length - 1;
+      if (!this.canPlay) {
+        return;
       }
-      this.setCurrentIndex(index);
+      if (this.playlist.length === 1) {
+        this.onLoop();
+      } else {
+        let index = this.currentIndex - 1;
+        if (index === -1) {
+          index = this.playlist.length - 1;
+        }
+        this.setCurrentIndex(index);
+        if (!this.playing) {
+          this.onToggle();
+        }
+      }
+      this.canPlay = false;
     },
     onReady() {
       this.canPlay = true;
@@ -174,14 +341,38 @@ export default {
     onError() {
       this.canPlay = true;
     },
+    onEnd() {
+      if (this.mode === playMode.loop) {
+        this.onLoop();
+      } else {
+        this.onNext();
+      }
+    },
+    onLoop() {
+      this.$refs.audio.currentTime = 0;
+      this.$refs.audio.play();
+      if (this.currentLyric) {
+        this.currentLyric.seek(0);
+      }
+    },
     onToggle() {
+      if (!this.canPlay) {
+        return;
+      }
       this.setPlayingState(!this.playing);
+      if (this.currentLyric) {
+        this.currentLyric.togglePlay();
+      }
     },
     updateTime(e) {
       this.currentTime = e.target.currentTime;
     },
     onProgressChange(percent) {
-      this.$refs.audio.currentTime = this.currentSong.duration * percent
+      const currentTime = this.currentSong.duration * percent;
+      this.$refs.audio.currentTime = currentTime;
+      if (this.currentLyric) {
+        this.currentLyric.seek(currentTime * 1000);
+      }
       if (!this.playing) {
         this.onToggle();
       }
@@ -236,6 +427,47 @@ export default {
       const sec = (interval % 60).toString().padStart(2, '0');
       return `${min}:${sec}`;
     },
+    resetCurrentIndex(list) {
+      let index = list.findIndex(item => {
+        return item.id === this.currentSong.id;
+      });
+      this.setCurrentIndex(index);
+    },
+    getSongLyric() {
+      this.currentSong.getLyric().then(lyric => {
+        // if (this.currentLyric !== lyric) {
+        //   return;
+        // }
+        this.currentLyric = new Lyric(lyric, this.handleLyricHightlight);
+        if (this.playing) {
+          this.currentLyric.play();
+        }
+      });
+    },
+    // 歌词改变时回调，让当前歌词高亮
+    handleLyricHightlight({ lineNum, txt }) {
+      this.currentLine = lineNum;
+      // 大于五行时歌词向上滚动
+      if (lineNum > 5) {
+        // 保证高亮歌词居中
+        let lineEl = this.$refs.lyricLine[lineNum - 5];
+        this.$refs.lyricList.scrollToElement(lineEl, 1000);
+      } else {
+        this.$refs.lyricList.scrollTo(0, 0, 1000);
+      }
+      this.playingLyric = txt;
+    },
+    syncWrapperTransform(wrapper, inner) {
+      if (!this.$refs[wrapper]) {
+        return;
+      }
+      let imageWrapper = this.$refs[wrapper];
+      let image = this.$refs[inner];
+      let wTransform = getComputedStyle(imageWrapper)[transform];
+      let iTransform = getComputedStyle(image)[transform];
+      imageWrapper.style[transform] =
+        wTransform === 'none' ? iTransform : iTransform.concat(' ', wTransform);
+    },
     _getPositionAndScroll() {
       const targetWidth = 40;
       const paddingLeft = 40;
@@ -255,10 +487,17 @@ export default {
       setFullScreen: 'SET_FULL_SCREEN',
       setPlayingState: 'SET_PLAYING_STATE',
       setCurrentIndex: 'SET_CURRENT_INDEX',
+      setPlayMode: 'SET_PLAY_MODE',
+      setPlayList: 'SET_PLAYLIST',
     }),
   },
+  created() {
+    this.touch = {};
+  },
   components: {
+    Scroll,
     ProgressBar,
+    ProgressCircle,
   },
 };
 </script>
@@ -333,7 +572,7 @@ export default {
       white-space: nowrap;
       font-size: 0;
 
-      .middle-l {
+      .middle-record {
         display: inline-block;
         vertical-align: top;
         position: relative;
@@ -386,7 +625,7 @@ export default {
         }
       }
 
-      .middle-r {
+      .middle-lyric {
         display: inline-block;
         vertical-align: top;
         width: 100%;

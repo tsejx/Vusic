@@ -33,11 +33,12 @@
 </template>
 
 <script type="text/ecmascript-6">
+import { mapActions } from 'vuex';
+import { prefixStyle } from 'common/js/dom';
+import { playlistMixin } from 'common/js/mixin';
 import Scroll from 'base/scroll/scroll';
 import SongList from 'base/song-list/song-list';
 import Loading from 'base/loading/loading';
-import { prefixStyle } from 'common/js/dom';
-import { mapActions } from 'vuex';
 
 const transform = prefixStyle('transform');
 const backdrop = prefixStyle('backdrop-filter');
@@ -45,6 +46,7 @@ const backdrop = prefixStyle('backdrop-filter');
 const RESERVED_HEIGHT = 40;
 
 export default {
+  mixins: [playlistMixin],
   data() {
     return {
       scrollY: 0,
@@ -70,22 +72,29 @@ export default {
     },
   },
   methods: {
+    handlePlayList(playlist) {
+      const bottom = playlist.length > 0 ? '60px' : ''
+      this.$refs.list.$el.style.bottom = bottom;
+      this.$refs.list.refresh();
+    },
     onScroll(pos) {
       this.scrollY = pos.y;
     },
     onBack() {
       this.$router.go(-1);
     },
-    onRandomPlay() {},
+    onRandomPlay() {
+      this.randomPlay({
+        list: this.songs,
+      });
+    },
     onSelectItem(item, index) {
       this.selectPlay({
         list: this.songs,
-        index
-      })
+        index,
+      });
     },
-    ...mapActions([
-      'selectPlay'
-    ])
+    ...mapActions(['selectPlay', 'randomPlay']),
   },
   created() {
     this.probeType = 3;

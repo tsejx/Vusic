@@ -57,27 +57,30 @@ export default {
         this.$refs.progressBar.clientWidth - progressBtnWidth,
         Math.max(0, this.touch.left + deltaX)
       );
-      this._handleProgressOffset(offsetWidth)
+      this._handleProgressOffset(offsetWidth);
     },
     onTouchEnd(e) {
       this.touch.initiated = false;
-      this._handlerTriggerPercent()
+      this._handlerTriggerPercent();
     },
     onProgressClick(e) {
-        this._handleProgressOffset(e.offsetX);
-        this._handlerTriggerPercent()
+      const rect = this.$refs.progressBar.getBoundingClientRect();
+      const offsetWidth = e.pageX - rect.left;
+      this._handleProgressOffset(offsetWidth);
+      // this._handleProgressOffset(e.offsetX);
+      this._handlerTriggerPercent();
     },
-    _handlerTriggerPercent () {
-        this.$emit('change', this._getPercent())
+    _handlerTriggerPercent() {
+      this.$emit('change', this._getPercent());
     },
     _handleProgressOffset(offsetWidth) {
       this.$refs.progress.style.width = `${offsetWidth}px`;
       this.$refs.progressBtn.style[transform] = `translate3d(${offsetWidth}px,0,0)`;
     },
     _getPercent() {
-        const barWidth = this.$refs.progressBar.clientWidth - progressBtnWidth
-        return this.$refs.progress.clientWidth / barWidth
-    }
+      const barWidth = this.$refs.progressBar.clientWidth - progressBtnWidth;
+      return this.$refs.progress.clientWidth / barWidth;
+    },
   },
 };
 </script>
