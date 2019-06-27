@@ -17,6 +17,8 @@ const state = {
     currentIndex: -1,
     // 歌单列表
     disclist: [],
+    // 榜单列表
+    ranklist: [],
 }
 
 export default state

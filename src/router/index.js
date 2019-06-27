@@ -6,7 +6,8 @@ import Rank from 'components/rank/rank';
 import Search from 'components/search/search';
 import Singer from 'components/singer/singer';
 // import SingerDetail from 'components/singer-detail/singer-detail'
-import Playlist from 'components/playlist/playlist';
+import PlayList from 'components/play-list/play-list';
+import RankList from 'components/rank-list/rank-list';
 
 // 注册vue-router插件
 Vue.use(Router);
@@ -27,7 +28,8 @@ export default new Router({
       children: [
         {
           path: ':id',
-          component: Playlist,
+          name: 'play-list',
+          component: PlayList,
         },
       ],
     },
@@ -38,6 +40,7 @@ export default new Router({
       children: [
         {
           path: ':id',
+          name: 'singer-detail',
           component: SingerDetail,
         },
       ],
@@ -46,6 +49,13 @@ export default new Router({
       path: '/rank',
       name: 'rank',
       component: Rank,
+      children: [
+        {
+          path: ':id',
+          name: 'rank-list',
+          component: RankList,
+        },
+      ],
     },
     {
       path: '/search',

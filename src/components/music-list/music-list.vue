@@ -23,7 +23,7 @@
       ref="list"
     >
       <div class="song-list-wrapper">
-        <song-list :songs="songs" @select="onSelectItem"></song-list>
+        <song-list :rank="rank" :songs="songs" @select="onSelectItem"></song-list>
       </div>
       <div v-show="!songs.length" class="loading-container">
         <loading></loading>
@@ -65,6 +65,10 @@ export default {
       type: String,
       default: '',
     },
+    rank: {
+      type: Boolean,
+      default: false,
+    }
   },
   computed: {
     bgStyle() {

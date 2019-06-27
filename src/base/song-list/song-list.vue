@@ -1,7 +1,15 @@
 <template>
   <div class="song-list">
     <ul>
-      <li class="item" v-for="(item, index) of songs" :key="item.id" @click="onSelectItem(item, index)">
+      <li
+        class="item"
+        v-for="(item, index) of songs"
+        :key="item.id"
+        @click="onSelectItem(item, index)"
+      >
+        <div class="rank" v-show="rank">
+          <span :class="getRankCls(index)" v-text="getRankText(index)"></span>
+        </div>
         <div class="content">
           <h2 class="name">{{item.name}}</h2>
           <p class="desc">{{getSongDescription(item)}}</p>
@@ -18,13 +26,29 @@ export default {
       type: Array,
       default: [],
     },
+    rank: {
+      type: Boolean,
+      default: false,
+    },
   },
   methods: {
     onSelectItem(item, index) {
-      this.$emit('select', item, index)
+      this.$emit('select', item, index);
     },
     getSongDescription(song) {
       return `${song.singer} - ${song.album}`;
+    },
+    getRankCls(index) {
+      if (index <= 2) {
+        return `icon icon${index}`;
+      } else {
+        return 'normal';
+      }
+    },
+    getRankText(index) {
+      if (index > 2) {
+        return index + 1;
+      }
     },
   },
 };
@@ -67,7 +91,7 @@ export default {
         }
       }
 
-      .text {
+      .normal {
         color: $color-theme;
         font-size: $font-size-lg;
       }
