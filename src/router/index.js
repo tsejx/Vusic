@@ -6,7 +6,7 @@ import Rank from 'components/rank/rank';
 import Search from 'components/search/search';
 import Singer from 'components/singer/singer';
 // import SingerDetail from 'components/singer-detail/singer-detail'
-import PlayList from 'components/play-list/play-list';
+import SongList from 'components/song-list/song-list';
 import RankList from 'components/rank-list/rank-list';
 
 // 注册vue-router插件
@@ -28,8 +28,8 @@ export default new Router({
       children: [
         {
           path: ':id',
-          name: 'play-list',
-          component: PlayList,
+          name: 'song-list',
+          component: SongList,
         },
       ],
     },
