@@ -1,4 +1,5 @@
 import { playMode } from 'common/js/config'
+import { loadSearchHistroy } from 'common/js/cache'
 
 const state = {
     // 最近查看歌手信息
@@ -19,6 +20,8 @@ const state = {
     disclist: [],
     // 榜单列表
     ranklist: [],
+    // 搜索历史列表
+    searchHistory: loadSearchHistroy(),
 }
 
 export default state

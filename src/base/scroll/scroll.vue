@@ -7,8 +7,8 @@
 <script type="text/ecmascript-6">
 import BScroll from 'better-scroll';
 
-const DIRECTION_H = 'horizontal';
-const DIRECTION_V = 'vertical';
+// const DIRECTION_H = 'horizontal';
+// const DIRECTION_V = 'vertical';
 
 export default {
   props: {
@@ -28,6 +28,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    pullup: {
+      type: Boolean,
+      default: false,
+    },
+    beforeScroll: {
+      type: Boolean,
+      default: false,
+    }
   },
   mounted() {
     setTimeout(() => {
@@ -48,6 +56,18 @@ export default {
         this.scroll.on('scroll', pos => {
           this.$emit('scroll', pos);
         });
+      }
+      if (this.pullup) {
+        this.scroll.on('scrollend', () => {
+          if (this.scroll.y <= this.scroll.maxScrollY + 50) {
+            this.$emit('scrollToEnd');
+          }
+        })
+      }
+      if (this.beforeScroll) {
+        this.scroll.on('beforeScrollStart', () => {
+          this.$emit('beforeScroll')
+        })
       }
     },
     enable() {

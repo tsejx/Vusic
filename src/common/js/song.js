@@ -65,7 +65,7 @@ export function isValidMusic(musicData) {
 
 export function injectSongUrl(songs) {
   if (!songs.length) {
-    return Promise.resolbe(songs)
+    return Promise.resolve(songs)
   }
   return getSongsUrl(songs).then((purlMap) => {
     songs = songs.filter((song) => {
