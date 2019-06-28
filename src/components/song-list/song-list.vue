@@ -36,7 +36,6 @@ export default {
         return;
       }
       getSongList(this.disclist.id).then(res => {
-        console.log(res);
         if (res.code === ERR_OK) {
           injectSongUrl(this._normalizeSongsData(res.cdlist[0].songlist)).then(songs => {
             this.songs = songs;

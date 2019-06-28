@@ -33,15 +33,7 @@ export const playerMixin = {
         ? 'icon-loop'
         : 'icon-random';
     },
-    ...mapGetters([
-      // 'isFullScreen',
-      // 'playlist',
-      // 'currentSong',
-      // 'playing',
-      // 'currentIndex',
-      'mode',
-      'sequenceList',
-    ]),
+    ...mapGetters(['playlist', 'currentSong', 'mode', 'sequenceList', 'favoriteList']),
   },
   methods: {
     onModeChange() {
@@ -62,22 +54,41 @@ export const playerMixin = {
       });
       this.setCurrentIndex(index);
     },
+    onFavoriteToggle(song) {
+      if (this.isFavorite(song)) {
+        this.deleteFavoriteList(song);
+      } else {
+        this.saveFavoriteList(song);
+      }
+    },
+    favoriteIcon(song) {
+      if (this.isFavorite(song)) {
+        return 'icon-favorite';
+      }
+      return 'icon-not-favorite';
+    },
+    isFavorite(song) {
+      const index = this.favoriteList.findIndex(item => {
+        return item.id === song.id;
+      });
+      return index > -1;
+    },
     ...mapMutations({
-      // setFullScreen: 'SET_FULL_SCREEN',
-      // setPlayingState: 'SET_PLAYING_STATE',
       setCurrentIndex: 'SET_CURRENT_INDEX',
       setPlayMode: 'SET_PLAY_MODE',
       setPlayList: 'SET_PLAYLIST',
+      setPlayingState: 'SET_PLAYING_STATE',
     }),
-  }
-}
+    ...mapActions(['saveFavoriteList', 'deleteFavoriteList']),
+  },
+};
 
 export const searchMixin = {
   data() {
     return {
       searchText: '',
       refreshDelay: 120,
-    }
+    };
   },
   computed: {
     ...mapGetters(['searchHistory']),
@@ -96,5 +107,5 @@ export const searchMixin = {
       this.saveSearchHistory(this.searchText);
     },
     ...mapActions(['saveSearchHistory', 'deleteSearchHistory']),
-  }
-}
+  },
+};

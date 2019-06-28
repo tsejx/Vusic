@@ -82,7 +82,11 @@
               <i class="icon-next" @click="onNext"></i>
             </div>
             <div class="icon i-right">
-              <i class="icon icon-not-favorite"></i>
+              <i
+                class="icon"
+                :class="favoriteIcon(currentSong)"
+                @click="onFavoriteToggle(currentSong)"
+              ></i>
             </div>
           </div>
         </div>
@@ -124,7 +128,7 @@
     <audio
       ref="audio"
       :src="currentSong.url"
-      @canplay="onReady"
+      @play="onReady"
       @error="onError"
       @timeupdate="updateTime"
       @ended="onEnd"
@@ -197,7 +201,8 @@ export default {
       if (this.currentLyric) {
         this.currentLyric.stop();
       }
-      setTimeout(() => {
+      clearTimeout(this.timer);
+      this.timer = setTimeout(() => {
         this.$refs.audio.play();
         this.getSongLyric();
       }, 1000);
@@ -295,6 +300,7 @@ export default {
       }
       if (this.playlist.length === 1) {
         this.onLoop();
+        return;
       } else {
         let index = this.currentIndex + 1;
         if (index === this.playlist.length) {
@@ -312,7 +318,10 @@ export default {
         return;
       }
       if (this.playlist.length === 1) {
+        // 播放列表中仅有一首歌曲时循环播放
+        // 并且禁用切换歌曲按钮
         this.onLoop();
+        return;
       } else {
         let index = this.currentIndex - 1;
         if (index === -1) {
@@ -420,9 +429,10 @@ export default {
     },
     getSongLyric() {
       this.currentSong.getLyric().then(lyric => {
-        // if (this.currentLyric !== lyric) {
-        //   return;
-        // }
+        // 防止切换歌曲导致异步执行的歌词获取操作的问题
+        if (this.currentSong.lyric !== lyric) {
+          return;
+        }
         this.currentLyric = new Lyric(lyric, this.handleLyricHightlight);
         if (this.playing) {
           this.currentLyric.play();

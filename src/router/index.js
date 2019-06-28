@@ -8,6 +8,7 @@ import Singer from 'components/singer/singer';
 // import SingerDetail from 'components/singer-detail/singer-detail'
 import SongList from 'components/song-list/song-list';
 import RankList from 'components/rank-list/rank-list';
+import Profile from 'components/profile/profile';
 
 // 注册vue-router插件
 Vue.use(Router);
@@ -62,5 +63,9 @@ export default new Router({
       name: 'search',
       component: Search,
     },
+    {
+      path: '/profile',
+      component: Profile
+    }
   ],
 });
