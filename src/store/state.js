@@ -1,5 +1,5 @@
 import { playMode } from 'common/js/config'
-import { loadSearchHistroy } from 'common/js/cache'
+import { loadSearchHistroy, loadPlay } from 'common/js/cache'
 
 const state = {
     // 最近查看歌手信息
@@ -22,6 +22,8 @@ const state = {
     ranklist: [],
     // 搜索历史列表
     searchHistory: loadSearchHistroy(),
+    // 播放历史
+    playHistory: loadPlay(),
 }
 
 export default state

@@ -86,8 +86,6 @@ export default {
       return hot.concat(ret);
     },
     onSelectSinger(singer) {
-      /* eslint-disable */
-      console.log(singer.id)
       this.$router.push({
         path: `/singer/${singer.id}`
       })

@@ -35,12 +35,16 @@ export default {
     beforeScroll: {
       type: Boolean,
       default: false,
+    },
+    refreshDelay: {
+      type: Number,
+      default: 20,
     }
   },
   mounted() {
     setTimeout(() => {
       this.initScroll();
-    }, 20);
+    }, this.refreshDelay);
   },
   methods: {
     initScroll() {

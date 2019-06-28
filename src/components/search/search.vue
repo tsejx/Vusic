@@ -2,11 +2,11 @@
   <div class="search">
     <!-- 搜索栏 -->
     <div class="search-wrapper">
-      <search-bar ref="searchBar" @search="onSearchChange"></search-bar>
+      <search-bar ref="searchBar" @search="onSearch"></search-bar>
     </div>
     <!-- 热门搜索 -->
     <div class="shortcut-wrapper" ref="shortcutWrapper" v-show="!searchText">
-      <scroll class="shortcut" ref="shortcut" :data="shortcut">
+      <scroll class="shortcut" ref="shortcut" :data="shortcut" :refreshDelay="refreshDelay">
         <div>
           <div class="hot-key">
             <div class="title">热门搜索</div>
@@ -38,7 +38,12 @@
     </div>
     <!-- 搜索结果 -->
     <div class="search-result" v-show="searchText" ref="searchResult">
-      <suggest ref="suggest" :searchText="searchText" @onListScroll="onInputBlur" @select="onSaveHistory"></suggest>
+      <suggest
+        ref="suggest"
+        :searchText="searchText"
+        @onListScroll="onInputBlur"
+        @select="onSaveHistory"
+      ></suggest>
     </div>
     <confirm ref="confirm" text="清空所有历史记录？" @confirm="clearSearchHistory"></confirm>
     <router-view></router-view>
@@ -54,21 +59,19 @@ import Scroll from 'base/scroll/scroll';
 import SearchBar from 'base/search-bar/search-bar';
 import SearchList from 'base/search-list/search-list';
 import Suggest from 'components/suggest/suggest';
-import { playlistMixin } from 'common/js/mixin';
+import { playlistMixin, searchMixin } from 'common/js/mixin';
 
 export default {
-  mixins: [playlistMixin],
+  mixins: [playlistMixin, searchMixin],
   data() {
     return {
       hotKey: [],
-      searchText: '',
     };
   },
   computed: {
     shortcut() {
       return this.hotKey.concat(this.searchHistory);
     },
-    ...mapGetters(['searchHistory']),
   },
   watch: {
     searchText(newSearchText) {
@@ -83,30 +86,15 @@ export default {
     this._loadHotKey();
   },
   methods: {
-    onSearchChange(k) {
-      this.searchText = k.trim();
-    },
-    onHotKeySelect(hotKey) {
-      this.$refs.searchBar.onChange(hotKey);
-    },
-    onInputBlur() {
-      this.$refs.searchBar.onBlur();
-    },
-    onSaveHistory(item) {
-      this.saveSearchHistory(this.searchText);
-    },
     showConfirm() {
-      this.$refs.confirm.showConfirm();
-    },
-    hideConfirm() {
-      this.$refs.confirm.hideConfirm();
+      this.$refs.confirm.show();
     },
     handlePlayList(playlist) {
       const bottom = playlist.length > 0 ? '60px' : '';
       this.$refs.shortcutWrapper.style.bottom = bottom;
       this.$refs.shortcut.refresh();
       this.$refs.searchResult.style.bottom = bottom;
-      this.$refs.suggest.onRefresh()
+      this.$refs.suggest.onRefresh();
     },
     _loadHotKey() {
       getHotKey().then(res => {
@@ -115,7 +103,7 @@ export default {
         }
       });
     },
-    ...mapActions(['saveSearchHistory', 'deleteSearchHistory', 'clearSearchHistory']),
+    ...mapActions(['clearSearchHistory']),
   },
   components: {
     SearchBar,

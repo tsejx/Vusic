@@ -1,6 +1,6 @@
 <template>
   <transition class="confirm-fade">
-    <div class="confirm" v-show="visible">
+    <div class="confirm" v-show="visible" @click.stop>
       <div class="confirm-wrapper">
         <div class="confirm-content">
           <p class="text">{{text}}</p>
@@ -36,18 +36,18 @@ export default {
     },
   },
   methods: {
-    showConfirm() {
+    show() {
       this.visible = true;
     },
-    hideConfirm() {
+    hide() {
       this.visible = false;
     },
     onCancel() {
-      this.hideConfirm();
+      this.hide();
       this.$emit('cancel');
     },
     onConfirm() {
-      this.hideConfirm();
+      this.hide();
       this.$emit('confirm');
     },
   },

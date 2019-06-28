@@ -113,11 +113,14 @@
             <i class="icon-mini" :class="miniIcon" @click.stop="onToggle"></i>
           </progress-circle>
         </div>
-        <div class="control">
+        <div class="control" @click.stop="showPlayList">
           <i class="icon-playlist"></i>
         </div>
       </div>
     </transition>
+    <!-- 播放列表 -->
+    <play-list ref="playlist"></play-list>
+    <!-- 播放音频 -->
     <audio
       ref="audio"
       :src="currentSong.url"
@@ -130,20 +133,23 @@
 </template>
 
 <script type="text/ecmascript-6">
-import { mapGetters, mapMutations } from 'vuex';
+import { mapGetters, mapMutations, mapActions } from 'vuex';
 import animations from 'create-keyframe-animation';
 import Lyric from 'lyric-parser';
 import { prefixStyle } from 'common/js/dom';
 import { playMode } from 'common/js/config';
 import { shuffle } from 'common/js/util';
+import { playerMixin } from 'common/js/mixin';
 import Scroll from 'base/scroll/scroll';
 import ProgressBar from 'base/progress-bar/progress-bar';
 import ProgressCircle from 'base/progress-circle/progress-circle';
+import PlayList from 'components/play-list/play-list';
 
 const transform = prefixStyle('transform');
 const transitionDuration = prefixStyle('transitionDuration');
 
 export default {
+  mixins: [playerMixin],
   data() {
     return {
       canPlay: false,
@@ -164,13 +170,6 @@ export default {
     miniIcon() {
       return this.playing ? 'icon-pause-mini' : 'icon-play-mini';
     },
-    modeIcon() {
-      return this.mode === playMode.sequence
-        ? 'icon-sequence'
-        : this.mode === playMode.loop
-        ? 'icon-loop'
-        : 'icon-random';
-    },
     disabeldCls() {
       return this.canPlay ? '' : 'disable';
     },
@@ -189,6 +188,9 @@ export default {
   },
   watch: {
     currentSong(newSong, oldSong) {
+      if (!newSong.id) {
+        return;
+      }
       if (newSong.id === oldSong.id) {
         return;
       }
@@ -239,19 +241,19 @@ export default {
         return;
       }
       if (!this.touch.moved) {
-        this.touch.moved = true
+        this.touch.moved = true;
       }
       const left = this.currentShow === 'record' ? 0 : -window.innerWidth;
       const offsetWidth = Math.min(0, Math.max(-window.innerWidth, left + deltaX));
       this.touch.percent = Math.abs(offsetWidth / window.innerWidth);
       this.$refs.lyricList.$el.style[transform] = `translate3d(${offsetWidth},0,0)`;
-      this.$refs.lyricList.$el.style[transitionDuration] = 0
+      this.$refs.lyricList.$el.style[transitionDuration] = 0;
       this.$refs.recordCover.style.opacity = 1 - this.touch.percent;
       this.$refs.recordCover.style[transitionDuration] = 0;
     },
     onTouchEnd(e) {
       if (!this.touch.moved) {
-        return
+        return;
       }
       let offsetWidth;
       let opacity;
@@ -279,25 +281,13 @@ export default {
       this.$refs.lyricList.$el.style[transitionDuration] = `${time}ms`;
       this.$refs.recordCover.style.opacity = opacity;
       this.$refs.recordCover.style[transitionDuration] = `${time}ms`;
-      this.touch.initiated = false
+      this.touch.initiated = false;
     },
     onBack() {
       this.setFullScreen(false);
     },
     onOpen() {
       this.setFullScreen(true);
-    },
-    onModeChange() {
-      const mode = (this.mode + 1) % 3;
-      this.setPlayMode(mode);
-      let list = null;
-      if (mode === playMode.random) {
-        list = shuffle(this.sequenceList);
-      } else {
-        list = this.sequenceList;
-      }
-      this.resetCurrentIndex(list);
-      this.setPlayList(list);
     },
     onNext() {
       if (!this.canPlay) {
@@ -337,6 +327,7 @@ export default {
     },
     onReady() {
       this.canPlay = true;
+      this.savePlayHistory(this.currentSong);
     },
     onError() {
       this.canPlay = true;
@@ -427,12 +418,6 @@ export default {
       const sec = (interval % 60).toString().padStart(2, '0');
       return `${min}:${sec}`;
     },
-    resetCurrentIndex(list) {
-      let index = list.findIndex(item => {
-        return item.id === this.currentSong.id;
-      });
-      this.setCurrentIndex(index);
-    },
     getSongLyric() {
       this.currentSong.getLyric().then(lyric => {
         // if (this.currentLyric !== lyric) {
@@ -468,6 +453,9 @@ export default {
       imageWrapper.style[transform] =
         wTransform === 'none' ? iTransform : iTransform.concat(' ', wTransform);
     },
+    showPlayList() {
+      this.$refs.playlist.show();
+    },
     _getPositionAndScroll() {
       const targetWidth = 40;
       const paddingLeft = 40;
@@ -490,6 +478,7 @@ export default {
       setPlayMode: 'SET_PLAY_MODE',
       setPlayList: 'SET_PLAYLIST',
     }),
+    ...mapActions(['savePlayHistory']),
   },
   created() {
     this.touch = {};
@@ -498,6 +487,7 @@ export default {
     Scroll,
     ProgressBar,
     ProgressCircle,
+    PlayList,
   },
 };
 </script>

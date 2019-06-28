@@ -23,14 +23,17 @@ const mutations = {
     state.currentIndex = index;
   },
   [types.SET_DISC_LIST](state, disclist) {
-    state.disclist = disclist
+    state.disclist = disclist;
   },
   [types.SET_RANK_LIST](state, ranklist) {
-    state.ranklist = ranklist
+    state.ranklist = ranklist;
   },
   [types.SET_SEARCH_HISTORY](state, list) {
     state.searchHistory = list;
-  }
+  },
+  [types.SET_PLAY_HISTORY](state, history) {
+    state.playHistory = history;
+  },
 };
 
 export default mutations;
