@@ -1,26 +1,23 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 
-// import Recommend from 'components/recommend/recommend';
-import Rank from 'components/rank/rank';
-import Search from 'components/search/search';
-import Singer from 'components/singer/singer';
-// import SingerDetail from 'components/singer-detail/singer-detail'
-import SongList from 'components/song-list/song-list';
-import RankList from 'components/rank-list/rank-list';
-import Profile from 'components/profile/profile';
-
 // 注册vue-router插件
 Vue.use(Router);
 
 const Recommend = () => import('components/recommend/recommend');
 const SingerDetail = () => import('components/singer-detail/singer-detail');
+const Rank = () => import('components/rank/rank');
+const Search = () => import('components/search/search');
+const Singer = () => import('components/singer/singer');
+const SongList = () => import('components/song-list/song-list');
+const RankList = () => import('components/rank-list/rank-list');
+const Profile = () => import('components/profile/profile');
 
 export default new Router({
   routes: [
     {
       path: '/',
-      redict: '/recommend',
+      redirect: '/recommend',
     },
     {
       name: 'recommend',
@@ -65,7 +62,7 @@ export default new Router({
     },
     {
       path: '/profile',
-      component: Profile
-    }
+      component: Profile,
+    },
   ],
 });
