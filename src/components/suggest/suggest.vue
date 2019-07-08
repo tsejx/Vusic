@@ -13,20 +13,19 @@
         class="suggest-item"
         v-for="(item, index) of dataList"
         :key="item.id"
-        @click="onSelectItem(item, index)"
+        @click="handleSongSelect(item, index)"
       >
-        <div class="icon">
+        <div class="suggest-icon">
           <i :class="iconCls(item)"></i>
         </div>
-        <div class="name">
-          <p class="text" v-html="getDisplayName(item)"></p>
+        <div class="suggest-name">
+          <p class="suggest-text" v-html="getDisplayName(item)"></p>
         </div>
       </li>
     </ul>
     <div class="no-result-wrapper">
-      <no-result class="no-result-wrapper" title="抱歉，暂无搜索结果"  v-show="!hasMore && !dataList.length"></no-result>
+      <no-result class="no-result-wrapper" title="抱歉，暂无搜索结果" v-show="!hasMore && !dataList.length"></no-result>
     </div>
-
   </scroll>
 </template>
 
@@ -38,21 +37,17 @@ import Singer from 'common/js/singer';
 import { createSong, isValidMusic, injectSongUrl } from 'common/js/song';
 import Scroll from 'base/scroll/scroll';
 import Loading from 'base/loading/loading';
-import NoResult from 'base/no-result/no-result'
+import NoResult from 'base/no-result/no-result';
 
 const TYPE_SINGER = 'singer';
 const pageSize = 20;
 
 export default {
-  data() {
-    return {
-      pageNo: 1,
-      dataList: [],
-      pullup: true,
-      hasMore: true,
-      beforeScroll: true,
-    };
+  components: {
+    Scroll,
+    NoResult,
   },
+
   props: {
     searchText: {
       type: String,
@@ -63,13 +58,22 @@ export default {
       default: true,
     },
   },
+  data() {
+    return {
+      pageNo: 1,
+      dataList: [],
+      pullup: true,
+      hasMore: true,
+      beforeScroll: true,
+    };
+  },
   watch: {
     searchText(k) {
       this.onSearch();
     },
   },
   methods: {
-    onSelectItem(item, index) {
+    handleSongSelect(item, index) {
       if (item.type === TYPE_SINGER) {
         const singer = new Singer({
           id: item.singermid,
@@ -84,7 +88,7 @@ export default {
       }
       // 该组件本身不处理保存搜索历史的使命
       // 所以此处只是往外派发事件
-      this.$emit('select', item)
+      this.$emit('select', item);
     },
     onSearch() {
       this.pageNo = 1;
@@ -116,11 +120,11 @@ export default {
       if (item.type === TYPE_SINGER) {
         return item.singername;
       } else {
-        return `${item.name}-${item.singer}`;
+        return `${item.name} - ${item.singer}`;
       }
     },
     onListScroll() {
-      this.$emit('onListScroll')
+      this.$emit('onListScroll');
     },
     onRefresh() {
       this.$refs.suggest.refresh();
@@ -156,10 +160,6 @@ export default {
     }),
     ...mapActions(['insertSong']),
   },
-  components: {
-    Scroll,
-    NoResult
-  },
 };
 </script>
 
@@ -180,24 +180,26 @@ export default {
       padding-bottom: 20px;
     }
 
-    .icon {
+    .suggest-icon {
       flex: 0 0 30px;
       width: 30px;
 
       [class^='icon-'] {
         font-size: 14px;
-        color: $color-text-d;
+        color: $text-color-md;
       }
     }
 
-    .name {
+    .suggest-name {
       flex: 1;
-      font-size: $font-size-medium;
-      color: $color-text-d;
+      color: $text-color;
+      font-size: $font-size;
+      font-family: $font-family;
       overflow: hidden;
 
-      .text {
+      .suggest-text {
         no-wrap();
+        font-size: $font-size-base;
       }
     }
   }

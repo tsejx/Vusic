@@ -12,34 +12,35 @@
         <h2 class="list-group-title">{{group.title}}</h2>
         <ul>
           <li
-            @click="onSelectItem(item)"
+            @click="handleSingerSelect(item)"
             v-for="item of group.items"
             class="list-group-item"
             :key="item.id"
           >
-            <img class="avatar" v-lazy="item.avatar">
+            <img class="avatar" v-lazy="item.avatar" />
             <span class="name">{{item.name}}</span>
           </li>
         </ul>
       </li>
     </ul>
+    <!-- 字母导航栏 -->
     <div
-      class="list-shortcut"
+      class="alphabet"
       @touchstart.stop.prevent="onShortcutTouchStart"
       @touchmove.stop.prevent="onShortcutTouchmove"
       @touchend.stop
     >
       <ul>
         <li
+          class="alphabet-item"
           v-for="(item, index) of alphabetNavigation"
-          class="item"
-          :data-index="index"
-          :key="index"
           :class="{'current': currentIndex === index}"
+          :data-index="index"
+          :key="item"
         >{{item}}</li>
       </ul>
     </div>
-    <div class="list-fixed" ref="fixed" v-show="fixedTitle">
+    <div class="fixed" ref="fixed" v-show="fixedTitle">
       <div class="fixed-title">{{fixedTitle}}</div>
     </div>
     <div v-show="!data.length" class="loading-container">
@@ -57,6 +58,10 @@ const TITLE_HEIGHT = 30;
 const ANCHOR_HEIGHT = 18;
 
 export default {
+  components: {
+    Scroll,
+    Loading,
+  },
   props: {
     data: {
       type: Array,
@@ -64,6 +69,14 @@ export default {
         return [];
       },
     },
+  },
+
+  data() {
+    return {
+      scrollY: -1,
+      currentIndex: 0,
+      diff: -1,
+    };
   },
   computed: {
     // 字母锚点导航
@@ -80,12 +93,40 @@ export default {
       return this.data[this.currentIndex] ? this.data[this.currentIndex].title : '';
     },
   },
-  data() {
-    return {
-      scrollY: -1,
-      currentIndex: 0,
-      diff: -1,
-    };
+  watch: {
+    data() {
+      setTimeout(() => {
+        this.calculateHeight();
+      }, 20);
+    },
+    scrollY(newY) {
+      const listHeight = this.listHeight;
+      // 当滚动到顶部，newY>0
+      if (newY > 0) {
+        this.currentIndex = 0;
+        return;
+      }
+      // 在中间部分滚动
+      for (let i = 0; i < listHeight.length - 1; i++) {
+        let height1 = listHeight[i];
+        let height2 = listHeight[i + 1];
+        if (-newY >= height1 && -newY < height2) {
+          this.currentIndex = i;
+          this.diff = height2 + newY;
+          return;
+        }
+      }
+      // 当滚动到底部，且-newY大于最后一个元素的上限
+      this.currentIndex = listHeight.length - 2;
+    },
+    diff(newVal) {
+      let fixedTop = newVal > 0 && newVal < TITLE_HEIGHT ? newVal - TITLE_HEIGHT : 0;
+      if (this.fixedTop === fixedTop) {
+        return;
+      }
+      this.fixedTop = fixedTop;
+      this.$refs.fixed.style.transform = `translate3d(0, ${fixedTop}px, 0)`;
+    },
   },
   created() {
     // 并不需要观察 touch 所以不放在 data
@@ -95,7 +136,8 @@ export default {
     this.probeType = 3;
   },
   methods: {
-    onSelectItem(item) {
+    // 进入歌手详情页
+    handleSingerSelect(item) {
       this.$emit('select', item);
     },
     onShortcutTouchStart(e) {
@@ -147,45 +189,6 @@ export default {
       this.$refs.listview.refresh();
     },
   },
-  watch: {
-    data() {
-      setTimeout(() => {
-        this.calculateHeight();
-      }, 20);
-    },
-    scrollY(newY) {
-      const listHeight = this.listHeight;
-      // 当滚动到顶部，newY>0
-      if (newY > 0) {
-        this.currentIndex = 0;
-        return;
-      }
-      // 在中间部分滚动
-      for (let i = 0; i < listHeight.length - 1; i++) {
-        let height1 = listHeight[i];
-        let height2 = listHeight[i + 1];
-        if (-newY >= height1 && -newY < height2) {
-          this.currentIndex = i;
-          this.diff = height2 + newY;
-          return;
-        }
-      }
-      // 当滚动到底部，且-newY大于最后一个元素的上限
-      this.currentIndex = listHeight.length - 2;
-    },
-    diff(newVal) {
-      let fixedTop = newVal > 0 && newVal < TITLE_HEIGHT ? newVal - TITLE_HEIGHT : 0;
-      if (this.fixedTop === fixedTop) {
-        return;
-      }
-      this.fixedTop = fixedTop;
-      this.$refs.fixed.style.transform = `translate3d(0, ${fixedTop}px, 0)`;
-    },
-  },
-  components: {
-    Scroll,
-    Loading,
-  },
 };
 </script>
 
@@ -197,7 +200,7 @@ export default {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  background: $color-background;
+  background: $color-bg;
 
   .list-group {
     padding-bottom: 30px;
@@ -206,9 +209,10 @@ export default {
       height: 30px;
       line-height: 30px;
       padding-left: 20px;
-      font-size: $font-size-sm;
-      color: $color-text-l;
-      background: $color-highlight-bg;
+      color: $white;
+      font-size: $font-size-lg;
+      font-weight: bold;
+      background: $theme-color;
     }
 
     .list-group-item {
@@ -219,18 +223,21 @@ export default {
       .avatar {
         width: 50px;
         height: 50px;
+        border: 2px solid $white;
         border-radius: 50%;
+        box-shadow: $shadow;
       }
 
       .name {
         margin-left: 20px;
-        color: $color-text-l;
+        color: $text-color;
         font-size: $font-size-md;
+        font-family: $font-family;
       }
     }
   }
 
-  .list-shortcut {
+  .alphabet {
     position: absolute;
     z-index: 30;
     right: 0;
@@ -243,19 +250,19 @@ export default {
     background: $color-background-d;
     font-family: Helvetica;
 
-    .item {
+    .alphabet-item {
       padding: 3px;
       line-height: 1;
-      color: $color-text-l;
+      color: $text-color;
       font-size: $font-size-sm;
-
       &.current {
         color: $color-theme;
+        font-weight: bold;
       }
     }
   }
 
-  .list-fixed {
+  .fixed {
     position: absolute;
     top: 0;
     left: 0;
@@ -265,9 +272,10 @@ export default {
       height: 30px;
       line-height: 30px;
       padding-left: 20px;
-      font-size: $font-size-sm;
-      color: $color-text-l;
-      background: $color-highlight-bg;
+      color: $white;
+      font-size: $font-size-lg;
+      font-weight: bold;
+      background: $theme-color;
     }
   }
 

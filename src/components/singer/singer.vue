@@ -1,6 +1,6 @@
 <template>
   <div class="singer" ref="singer">
-    <list-view @select="onSelectSinger" :data="singers" ref="list"></list-view>
+    <list-view @select="onSingerSelect" :data="singers" ref="list"></list-view>
     <router-view></router-view>
   </div>
 </template>
@@ -17,6 +17,9 @@ const HOT_NAME = '热门';
 const HOT_SINGER_LEN = 10;
 
 export default {
+  components: {
+    ListView,
+  },
   mixins: [playlistMixin],
   data() {
     return {
@@ -28,7 +31,7 @@ export default {
   },
   methods: {
     handlePlayList(playlist) {
-      const bottom = playlist.length > 0 ? '60px' : ''
+      const bottom = playlist.length > 0 ? '60px' : '';
       this.$refs.singer.style.bottom = bottom;
       this.$refs.list.refresh();
     },
@@ -85,19 +88,16 @@ export default {
       });
       return hot.concat(ret);
     },
-    onSelectSinger(singer) {
+    onSingerSelect(singer) {
       this.$router.push({
-        path: `/singer/${singer.id}`
-      })
+        path: `/singer/${singer.id}`,
+      });
 
       this.setSinger(singer);
     },
     ...mapMutations({
       setSinger: 'SET_SINGER',
-    })
-  },
-  components: {
-    ListView,
+    }),
   },
 };
 </script>

@@ -1,33 +1,41 @@
 <template>
   <div class="recommend" ref="recommend">
-    <scroll ref="scroll" class="recommend-content" :data="discList">
+    <scroll class="recommend-content" ref="scroll" :data="discList">
       <div>
-        <div v-if="recommends.length" class="slider-wrapper">
+        <!-- 走马灯 -->
+        <div class="slider-wrapper" v-if="sliders.length">
           <div class="slider-content">
             <slider ref="slider">
-              <div v-for="item of recommends" :key="item.id">
+              <div v-for="item of sliders" :key="item.id">
                 <a :href="item.linkUrl">
-                  <img @load="loadImage" :src="item.picUrl">
+                  <img @load="loadImage" :src="item.picUrl" />
                 </a>
               </div>
             </slider>
           </div>
         </div>
-        <div class="recommend-list">
+        <!-- 热门歌单推荐 -->
+        <div class="recommend-list" v-show="discList.length">
           <h1 class="recommend-header">热门歌单推荐</h1>
           <ul>
-            <li v-for="item of discList" class="recommend-item" :key="item.id" @click="onSelectItem(item)">
+            <li
+              class="recommend-item"
+              v-for="item of discList"
+              :key="item.id"
+              @click="onSelectItem(item)"
+            >
               <div class="recommend-icon">
-                <img width="60" height="60" v-lazy="item.picUrl">
+                <img width="60" height="60" v-lazy="item.picUrl" />
               </div>
               <div class="recommend-text">
-                <h2 class="recommend-name" v-html="item.songListAuthor"></h2>
+                <h3 class="recommend-name" v-html="item.songListAuthor"></h3>
                 <p class="recommend-desc" v-html="item.songListDesc"></p>
               </div>
             </li>
           </ul>
         </div>
       </div>
+      <!-- 加载 -->
       <div class="loading-conteinr" v-show="!discList.length">
         <loading></loading>
       </div>
@@ -37,19 +45,26 @@
 </template>
 
 <script type="ecmascript-6">
-import { mapMutations } from 'vuex'
-import Slider from 'base/slider/slider';
-import Scroll from 'base/scroll/scroll';
-import Loading from 'base/loading/loading';
+import { mapMutations } from 'vuex';
 import { ERR_OK } from 'api/config';
 import { getRecommend, getDiscList } from 'api/recommend';
+import Scroll from 'base/scroll/scroll';
+import Slider from 'base/slider/slider';
+import Loading from 'base/loading/loading';
 import { playlistMixin } from 'common/js/mixin';
 
 export default {
+  components: {
+    Slider,
+    Scroll,
+    Loading,
+  },
+
   mixins: [playlistMixin],
+
   data() {
     return {
-      recommends: [],
+      sliders: [],
       discList: [],
     };
   },
@@ -59,11 +74,20 @@ export default {
       this.loadData();
     }, 2000);
   },
+
   methods: {
+    loadData() {
+      getRecommend().then(res => {
+        if (res.code === ERR_OK) {
+          this.sliders = res.data.slider;
+          this.discList = res.data.songList;
+        }
+      });
+    },
     onSelectItem(item) {
       this.$router.push({
         path: `/recommend/${item.id}`,
-      })
+      });
       this.setDiscList(item);
     },
     handlePlayList(playlist) {
@@ -71,14 +95,7 @@ export default {
       this.$refs.recommend.style.bottom = bottom;
       this.$refs.scroll.refresh();
     },
-    loadData() {
-      getRecommend().then(res => {
-        if (res.code === ERR_OK) {
-          this.recommends = res.data.slider;
-          this.discList = res.data.songList;
-        }
-      });
-    },
+
     loadImage() {
       if (!this.checkLoaded) {
         this.checkloaded = true;
@@ -88,13 +105,8 @@ export default {
       }
     },
     ...mapMutations({
-      setDiscList: 'SET_DISC_LIST'
-    })
-  },
-  components: {
-    slider: Slider,
-    scroll: Scroll,
-    loading: Loading,
+      setDiscList: 'SET_DISC_LIST',
+    }),
   },
 };
 </script>
@@ -142,10 +154,13 @@ export default {
 .recommend-list {
   .recommend-header {
     height: 65px;
+    margin-left: 16px;
     line-height: 65px;
-    text-align: center;
-    font-size: $font-size-md;
-    color: $color-theme;
+    text-align: left;
+    color: $header-color;
+    font-size: $font-size-xl;
+    font-family: $font-family;
+    font-weight: bold;
   }
 
   .recommend-item {
@@ -157,7 +172,11 @@ export default {
     .recommend-icon {
       flex: 0 0 60px;
       width: 60px;
-      padding-right: 20px;
+      height: 60px;
+      margin-right: 20px;
+      border-radius: $rounded;
+      box-shadow: $shadow;
+      overflow: hidden;
     }
 
     .recommend-text {
@@ -167,15 +186,17 @@ export default {
       flex: 1;
       line-height: 20px;
       overflow: hidden;
-      font-size: $font-size-md;
+      font-family: $font-family;
 
       .recommend-name {
         margin-bottom: 10px;
         color: $color-text;
+        font-size: $font-size-md;
       }
 
       .recommend-desc {
-        color: $color-text-d;
+        color: $text-color-md;
+        font-size: $font-size-sm;
       }
     }
   }

@@ -1,15 +1,20 @@
 <template>
   <div class="rank" ref="rank">
-    <scroll class="ranklist" ref="scroll" :data="rankList">
+    <scroll class="rank-list" ref="scroll" :data="rankList">
       <ul>
-        <li class="item" v-for="item of rankList" :key="item.id" @click="onSelectItem(item)">
-          <div class="icon">
-            <img width="100" height="100" :src="item.picUrl">
+        <li
+          class="rank-item"
+          v-for="item of rankList"
+          :key="item.id"
+          @click="handleRankingSelect(item)"
+        >
+          <div class="rank-cover">
+            <img width="100" height="100" :src="item.picUrl" />
           </div>
-          <ul class="songlist">
-            <li class="song" v-for="(song,index) of item.songList" :key="song.id">
-              <span>{{index+1}}</span>
-              <span>{{song.songname}}</span>
+          <ul class="song-list">
+            <li class="song-cell" v-for="(song,index) of item.songList" :key="song.id">
+              <span>{{index+1}}.</span>
+              <span>{{song.singername + ' - ' + song.songname}}</span>
             </li>
           </ul>
         </li>
@@ -24,13 +29,17 @@
 
 <script type="text/ecmascript-6">
 import { mapMutations } from 'vuex';
-import { getTopList } from 'api/rank';
 import { ERR_OK } from 'api/config';
+import { getTopList } from 'api/rank';
 import { playlistMixin } from 'common/js/mixin';
 import Scroll from 'base/scroll/scroll';
 import Loading from 'base/loading/loading';
 
 export default {
+  components: {
+    Scroll,
+    Loading,
+  },
   mixins: [playlistMixin],
   data() {
     return {
@@ -38,21 +47,21 @@ export default {
     };
   },
   created() {
-    this._getTopList();
+    this._loadRankingList();
   },
   methods: {
-    onSelectItem(item) {
+    handleRankingSelect(item) {
       this.$router.push({
         path: `/rank/${item.id}`,
       });
-      this.setRankList(item)
+      this.setRankList(item);
     },
     handlePlayList(playlist) {
       const bottom = playlist.length > 0 ? '60px' : '';
       this.$refs.rank.style.bottom = bottom;
       this.$refs.scroll.refresh();
     },
-    _getTopList() {
+    _loadRankingList() {
       getTopList().then(res => {
         if (res.code === ERR_OK) {
           this.rankList = res.data.topList;
@@ -62,10 +71,6 @@ export default {
     ...mapMutations({
       setRankList: 'SET_RANK_LIST',
     }),
-  },
-  components: {
-    Scroll,
-    Loading,
   },
 };
 </script>
@@ -80,27 +85,27 @@ export default {
   top: 88px;
   bottom: 0;
 
-  .ranklist {
+  .rank-list {
     height: 100%;
     overflow: hidden;
 
-    .item {
+    .rank-item {
       display: flex;
+      justify-content: between;
       margin: 0 20px;
-      padding-top: 20px;
+      margin-top: 20px;
       height: 100px;
+      border-radius: $rounded-md;
+      box-shadow: $shadow-sm;
+      overflow: hidden;
 
-      &:last-child {
-        padding-bottom: 20px;
-      }
-
-      .icon {
+      .rank-cover {
         flex: 0 0 100px;
         width: 100px;
         height: 100px;
       }
 
-      .songlist {
+      .song-list {
         flex: 1;
         display: flex;
         flex-direction: column;
@@ -108,11 +113,11 @@ export default {
         padding: 0 20px;
         height: 100px;
         overflow: hidden;
-        background: $color-highlight-bg;
-        color: $color-text-d;
+        color: $theme-color;
         font-size: $font-size-sm;
+        font-family: $font-family;
 
-        .song {
+        .song-cell {
           no-wrap();
           line-height: 26px;
         }

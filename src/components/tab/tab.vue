@@ -1,16 +1,16 @@
 <template>
   <div class="tab">
     <router-link tag="div" class="tab-item" to="/recommend">
-      <span class="tab-link">推荐</span>
+      <span class="tab-text">推荐</span>
     </router-link>
     <router-link tag="div" class="tab-item" to="/singer">
-      <span class="tab-link">歌手</span>
+      <span class="tab-text">歌手</span>
     </router-link>
     <router-link tag="div" class="tab-item" to="/rank">
-      <span class="tab-link">排行</span>
+      <span class="tab-text">排行</span>
     </router-link>
     <router-link tag="div" class="tab-item" to="/search">
-      <span class="tab-link">搜索</span>
+      <span class="tab-text">搜索</span>
     </router-link>
   </div>
 </template>
@@ -20,7 +20,6 @@ export default {};
 </script>
 
 <style scope lang="stylus" rel="stylesheet/stylus">
-
 @import '~common/stylus/variable.styl';
 
 .tab {
@@ -33,13 +32,14 @@ export default {};
     flex: 1;
     text-align: center;
 
-    .tab-link {
+    .tab-text {
       padding-bottom: 5px;
-      // color: $color-text-l;
+      font-family: $font-family;
+      font-weight: bold;
     }
 
     &.router-link-active {
-      .tab-link {
+      .tab-text {
         color: $color-theme;
         border-bottom: 2px solid $color-theme;
       }

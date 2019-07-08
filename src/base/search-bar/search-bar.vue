@@ -54,31 +54,32 @@ export default {
   width: 100%;
   padding: 0 6px;
   height: 40px;
-  background: $color-highlight-bg;
   border-radius: 6px;
+  // border: 2px solid $theme-color;
+  font-family: $font-family;
+  box-shadow: $shadow-sm;
 
   .icon-search {
     font-size: 24px;
-    color: $color-bg;
+    color:$text-color-md;
   }
 
   .search-input {
     flex: 1;
     margin: 0 5px;
     line-height: 18px;
-    background: $color-highlight-bg;
-    color: $color-text;
-    font-size: $font-size-md;
+    color: $text-color;
+    font-size: $font-size-base;
     outline: 0;
 
     &::placeholder {
-      color: $color-text-d;
+      color: $text-color-md;
     }
   }
 
   .icon-dismiss {
     font-size: 16px;
-    color: $color-bg;
+    color: $text-color-md;
   }
 }
 </style>

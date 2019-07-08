@@ -3,9 +3,11 @@
     <m-header></m-header>
     <tab></tab>
     <!-- 路由匹配到的组件将渲染在这里 -->
-    <keep-alive>
-      <router-view></router-view>
-    </keep-alive>
+    <!-- <transition name="slide-fade"> -->
+      <keep-alive>
+        <router-view></router-view>
+      </keep-alive>
+    <!-- </transition> -->
     <player></player>
   </div>
 </template>
@@ -25,4 +27,17 @@ export default {
 };
 </script>
 
-<style scoped lang="stylus" rel="stylesheet/stylus"></style>
+<style scoped lang="stylus" rel="stylesheet/stylus">
+// .slide-fade-enter-active {
+//   transition: all 0.3s ease;
+// }
+
+// .slide-fade-leave-active {
+//   transition: all 0.3s cubic-bezier(1, 0.5, 0.8, 1);
+// }
+
+// .slide-fade-enter, .slide-fade-leave-to {
+//   transform: translateX(10px);
+//   opacity: 0;
+// }
+</style>

@@ -9,10 +9,10 @@
       <scroll class="shortcut" ref="shortcut" :data="shortcut" :refreshDelay="refreshDelay">
         <div>
           <div class="hot-key">
-            <div class="title">热门搜索</div>
+            <div class="hot-title">热门搜索</div>
             <ul>
               <li
-                class="item"
+                class="hot-item"
                 v-for="item of hotKey"
                 :key="item.id"
                 @click="onHotKeySelect(item.k)"
@@ -62,6 +62,13 @@ import Suggest from 'components/suggest/suggest';
 import { playlistMixin, searchMixin } from 'common/js/mixin';
 
 export default {
+  components: {
+    SearchBar,
+    SearchList,
+    Suggest,
+    Confirm,
+    Scroll,
+  },
   mixins: [playlistMixin, searchMixin],
   data() {
     return {
@@ -105,13 +112,6 @@ export default {
     },
     ...mapActions(['clearSearchHistory']),
   },
-  components: {
-    SearchBar,
-    SearchList,
-    Suggest,
-    Confirm,
-    Scroll,
-  },
 };
 </script>
 
@@ -137,20 +137,25 @@ export default {
       .hot-key {
         margin: 0 20px 20px 20px;
 
-        .title {
+        .hot-title {
           margin-bottom: 20px;
-          font-size: $font-size-md;
-          color: $color-text-l;
+          text-align: left;
+          color: $black;
+          font-size: $font-size-xl;
+          font-family: $font-family;
+          font-weight: bold;
         }
 
-        .item {
+        .hot-item {
           display: inline-block;
           padding: 5px 10px;
           margin: 0 20px 10px 0;
           border-radius: 6px;
-          background: $color-highlight-bg;
+          background: #D9DAF0;
+          color: #5E60D1;
           font-size: $font-size-md;
-          color: $color-text-d;
+          font-family: $family;
+          font-weight: bold;
         }
       }
 

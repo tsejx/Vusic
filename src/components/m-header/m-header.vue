@@ -15,6 +15,7 @@ export default {
 </script>
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
+@import url('https://fonts.googleapis.com/css?family=Lobster&display=swap&subset=latin-ext');
 @import '~common/stylus/variable';
 @import '~common/stylus/mixin';
 
@@ -40,7 +41,9 @@ export default {
     display: inline-block;
     vertical-align: top;
     line-height: 44px;
-    font-size: $font-size-lg;
+    font-size: $font-size-xxl;
+    font-family: 'Lobster', cursive;
+    font-weight: bold;
   }
 
   .profile {

@@ -2,8 +2,8 @@
   <div class="search-list" v-show="searches.length">
     <transition-group name="list" tag="ul">
       <li class="search-item" v-for="item of searches" :key="item" @click="onSelectItem(item)">
-        <span class="text">{{item}}</span>
-        <span class="icon">
+        <span class="search-text">{{item}}</span>
+        <span class="search-icon">
           <i class="icon-delete" @click.stop="onDeleteItem(item)"></i>
         </span>
       </li>
@@ -20,14 +20,14 @@ export default {
     },
   },
   methods: {
-      // 基础组件应该将事件派发出去
-      onSelectItem(item) {
-          this.$emit('select', item)
-      },
-      onDeleteItem(item) {
-          this.$emit('delete', item)
-      }
-  }
+    // 基础组件应该将事件派发出去
+    onSelectItem(item) {
+      this.$emit('select', item);
+    },
+    onDeleteItem(item) {
+      this.$emit('delete', item);
+    },
+  },
 };
 </script>
 
@@ -50,12 +50,12 @@ export default {
       height: 0;
     }
 
-    .text {
+    .search-text {
       flex: 1;
-      color: $color-text-l;
+      color: $text-color;
     }
 
-    .icon {
+    .search-icon {
       extend-click();
 
       .icon-delete {
