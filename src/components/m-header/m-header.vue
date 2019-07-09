@@ -1,7 +1,7 @@
 <template>
   <div class="m-header">
     <div class="icon"></div>
-    <h1 class="header-title">Vusic</h1>
+    <!-- <h1 class="header-title">Vusic</h1> -->
     <router-link to="/profile" class="profile" tag="div">
       <i class="icon-profile"></i>
     </router-link>
@@ -15,7 +15,6 @@ export default {
 </script>
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
-@import url('https://fonts.googleapis.com/css?family=Lobster&display=swap&subset=latin-ext');
 @import '~common/stylus/variable';
 @import '~common/stylus/mixin';
 
@@ -29,12 +28,12 @@ export default {
   .icon {
     display: inline-block;
     vertical-align: top;
-    width: 30px;
+    width: 96px;
     height: 32px;
     margin-top: 6px;
     margin-right: 9px;
-    bg-image('logo');
-    background-size: 30px 32px;
+    bg-image('copyright');
+    background-size: 96px 32px;
   }
 
   .header-title {
@@ -42,7 +41,6 @@ export default {
     vertical-align: top;
     line-height: 44px;
     font-size: $font-size-xxl;
-    font-family: 'Lobster', cursive;
     font-weight: bold;
   }
 
