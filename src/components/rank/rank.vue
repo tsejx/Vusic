@@ -96,7 +96,7 @@ export default {
       margin-top: 20px;
       height: 100px;
       border-radius: $rounded-md;
-      box-shadow: $shadow-sm;
+      box-shadow: $card-shadow;
       overflow: hidden;
 
       .rank-cover {

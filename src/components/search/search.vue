@@ -21,9 +21,9 @@
           </div>
 
           <div class="search-history" v-show="searchHistory.length">
-            <h1 class="title">
-              <span class="text">搜索历史</span>
-              <span class="clear" @click="showConfirm">
+            <h1 class="history-title">
+              <span class="history-text">搜索历史</span>
+              <span class="history-clear" @click="showConfirm">
                 <i class="icon-clear"></i>
               </span>
             </h1>
@@ -163,23 +163,25 @@ export default {
         position: relative;
         margin: 0 20px;
 
-        .title {
+        .history-title {
           display: flex;
           align-items: center;
           height: 40px;
-          font-size: $font-size-md;
-          color: $color-text-l;
 
-          .text {
+          .history-text {
             flex: 1;
+            color: $black;
+            font-size: $font-size-xl;
+            font-family: $font-family;
+            font-weight: bold;
           }
 
-          .clear {
+          .history-clear {
             extend-click();
 
             .icon-clear {
               font-size: $font-size-md;
-              color: $color-text-d;
+              color: $text-color-md;
             }
           }
         }
