@@ -116,8 +116,8 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-@import '~common/stylus/variable';
-@import '~common/stylus/mixin';
+@import '~styles/variable';
+@import '~styles/mixin';
 
 .search {
   .search-wrapper {

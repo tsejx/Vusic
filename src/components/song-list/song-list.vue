@@ -12,6 +12,9 @@ import MusicList from 'components/music-list/music-list';
 import { createSong, isValidMusic, injectSongUrl } from 'common/js/song';
 
 export default {
+  components: {
+    MusicList,
+  },
   data() {
     return {
       songs: [],
@@ -52,9 +55,6 @@ export default {
       });
       return ret;
     },
-  },
-  components: {
-    MusicList,
   },
 };
 </script>

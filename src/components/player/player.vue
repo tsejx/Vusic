@@ -10,15 +10,15 @@
       <div class="normal-player" v-show="isFullScreen">
         <!-- 背景 -->
         <div class="background">
-          <img width="100%" height="100%" :src="currentSong.image">
+          <img width="100%" height="100%" :src="currentSong.image" />
         </div>
         <!-- 页面顶部 -->
         <div class="top">
           <div class="back" @click="onBack">
             <i class="icon-back"></i>
           </div>
-          <h1 class="title" v-html="currentSong.name"></h1>
-          <h2 class="subtitle" v-html="currentSong.singer"></h2>
+          <h1 class="song-title" v-html="currentSong.name"></h1>
+          <h2 class="song-subtitle" v-html="currentSong.singer"></h2>
         </div>
         <!-- 页面中部 -->
         <div
@@ -31,19 +31,19 @@
           <div class="middle-record" ref="recordCover">
             <div class="record-wrapper" ref="recordWrapper">
               <div class="record" ref="recordCoverWrapper">
-                <img class="image" ref="image" :class="recordRotate" :src="currentSong.image">
+                <img class="image" ref="image" :class="recordRotate" :src="currentSong.image" />
               </div>
             </div>
-            <div class="playing-lyric-wrapper">
-              <div class="playing-lyric">{{playingLyric}}</div>
+            <div class="lyric-preview-wrapper">
+              <div class="lyric-preview">{{playingLyric}}</div>
             </div>
           </div>
           <!-- 歌词 -->
-          <scroll class="middle-lyric" ref="lyricList" :data="currentLyric && currentLyric.lines">
-            <div class="lyric-wrapper">
+          <scroll class="lyric-container" ref="lyricList" :data="currentLyric && currentLyric.lines">
+            <div class="lyric-viewport">
               <div v-if="currentLyric">
                 <p
-                  class="text"
+                  class="lyric-text"
                   ref="lyricLine"
                   v-for="(line, index) of currentLyric.lines"
                   :class="{'current': currentLine === index}"
@@ -104,7 +104,7 @@
               class="image"
               :class="recordRotate"
               :src="currentSong.image"
-            >
+            />
           </div>
         </div>
         <!-- 歌曲信息 -->
@@ -153,6 +153,12 @@ const transform = prefixStyle('transform');
 const transitionDuration = prefixStyle('transitionDuration');
 
 export default {
+  components: {
+    Scroll,
+    ProgressBar,
+    ProgressCircle,
+    PlayList,
+  },
   mixins: [playerMixin],
   data() {
     return {
@@ -223,6 +229,9 @@ export default {
         }
       }
     },
+  },
+  created() {
+    this.touch = {};
   },
   methods: {
     onTouchStart(e) {
@@ -490,21 +499,12 @@ export default {
     }),
     ...mapActions(['savePlayHistory']),
   },
-  created() {
-    this.touch = {};
-  },
-  components: {
-    Scroll,
-    ProgressBar,
-    ProgressCircle,
-    PlayList,
-  },
 };
 </script>
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
-@import '~common/stylus/variable';
-@import '~common/stylus/mixin';
+@import '~styles/variable';
+@import '~styles/mixin';
 
 .player {
   .normal-player {
@@ -541,26 +541,28 @@ export default {
           display: block;
           padding: 9px;
           font-size: $font-size-xl;
-          color: $color-theme;
+          color: $;
           transform: rotate(-90deg);
         }
       }
 
-      .title {
+      .song-title {
         width: 70%;
         margin: 0 auto;
         line-height: 40px;
         text-align: center;
         no-wrap();
         font-size: $font-size-lg;
-        color: $color-text;
+        font-family: $font-family;
+        color: $white;
       }
 
-      .subtitle {
+      .song-subtitle {
         line-height: 20px;
         text-align: center;
         font-size: $font-size-md;
-        color: $color-text;
+        font-family: $font-family;
+        color: $white;
       }
     }
 
@@ -610,35 +612,37 @@ export default {
           }
         }
 
-        .playing-lyric-wrapper {
+        .lyric-preview-wrapper {
           width: 80%;
           margin: 30px auto 0 auto;
           overflow: hidden;
           text-align: center;
 
-          .playing-lyric {
+          .lyric-preview {
             height: 20px;
             line-height: 20px;
             font-size: $font-size-md;
-            color: $color-text-l;
+            font-family: $font-family;
+            // color: $text-color;
+            color: $white;
           }
         }
       }
 
-      .middle-lyric {
+      .lyric-container {
         display: inline-block;
         vertical-align: top;
         width: 100%;
         height: 100%;
         overflow: hidden;
 
-        .lyric-wrapper {
+        .lyric-viewport {
           width: 80%;
           margin: 0 auto;
           overflow: hidden;
           text-align: center;
 
-          .text {
+          .lyric-text {
             line-height: 32px;
             color: $color-text-l;
             font-size: $font-size-md;
@@ -718,10 +722,10 @@ export default {
 
         .icon {
           flex: 1;
-          color: $color-theme;
+          color: $;
 
           &.disable {
-            color: $color-theme-d;
+            color: $text-color-md;
           }
 
           i {
@@ -782,7 +786,8 @@ export default {
     z-index: 180;
     width: 100%;
     height: 60px;
-    background: $color-highlight-bg;
+    background: $white;
+    border-top: 1px solid $text-color-xs;
 
     &.mini-enter-active, &.mini-leave-active {
       transition: all 0.4s;
@@ -827,14 +832,15 @@ export default {
       .name {
         margin-bottom: 2px;
         no-wrap();
-        font-size: $font-size-md;
         color: $color-text;
+        font-size: $font-size-md;
+        font-family: $font-family;
       }
 
       .desc {
         no-wrap();
         font-size: $font-size-sm;
-        color: $color-text-d;
+        color: $text-color-sm;
       }
     }
 
@@ -845,7 +851,7 @@ export default {
 
       .icon-play-mini, .icon-pause-mini, .icon-playlist {
         font-size: 30px;
-        color: $color-theme-d;
+        color: $theme-color;
       }
 
       .icon-mini {

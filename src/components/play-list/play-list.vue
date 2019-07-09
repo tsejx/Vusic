@@ -20,7 +20,7 @@
               ref="listItem"
               v-for="(item, index) of sequenceList"
               :key="item.id"
-              @click="onSelectItem(item, index)"
+              @click="handleSongSelect(item, index)"
             >
               <i class="current" :class="getCurrentIcon(item)"></i>
               <span class="text" v-html="item.name"></span>
@@ -92,7 +92,7 @@ export default {
     hide() {
       this.visible = false;
     },
-    onSelectItem(item, index) {
+    handleSongSelect(item, index) {
       if (this.mode === playMode.random) {
         index = this.playlist.findIndex(song => {
           return song.id === item.id;
@@ -156,8 +156,8 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-@import '~common/stylus/variable';
-@import '~common/stylus/mixin';
+@import '~styles/variable';
+@import '~styles/mixin';
 
 .play-list {
   position: fixed;
@@ -189,7 +189,9 @@ export default {
     left: 0;
     bottom: 0;
     width: 100%;
-    background-color: $color-highlight-bg;
+    // background-color: $color-highlight-bg;
+    border-top: 1px solid $text-color-xs;
+    background-color: $background-color;
 
     .list-header {
       position: relative;
@@ -202,13 +204,14 @@ export default {
         .icon {
           margin-right: 10px;
           font-size: 30px;
-          color: $color-theme-d;
+          color: $theme-color;
         }
 
         .text {
           flex: 1;
           font-size: $font-size-md;
-          color: $color-text-l;
+          font-family: $font-family;
+          color: $text-color;
         }
 
         .clear {
@@ -216,7 +219,7 @@ export default {
 
           .icon-clear {
             font-size: $font-size-md;
-            color: $color-text-d;
+            color: $text-color-md;
           }
         }
       }
@@ -244,22 +247,23 @@ export default {
         .current {
           flex: 0 0 20px;
           width: 20px;
+          color: $theme-color;
           font-size: $font-size-sm;
-          color: $color-theme-d;
         }
 
         .text {
           flex: 1;
           no-wrap();
+          color: $text-color;
           font-size: $font-size-md;
-          color: $color-text-d;
+          font-family: $font-family;
         }
 
         .like {
           extend-click();
           margin-right: 15px;
           font-size: $font-size-sm;
-          color: $color-theme;
+          color: $;
 
           .icon-favorite {
             color: $color-sub-theme;
@@ -269,7 +273,7 @@ export default {
         .delete {
           extend-click();
           font-size: $font-size-sm;
-          color: $color-theme;
+          color: $;
         }
       }
     }
@@ -282,9 +286,10 @@ export default {
         display: flex;
         align-items: center;
         padding: 8px 16px;
-        border: 1px solid $color-text-l;
+        border: 1px solid $theme-color;
         border-radius: 100px;
-        color: $color-text-l;
+        color: $theme-color;
+        font-family: $font-family;
 
         .icon-add {
           margin-right: 5px;
@@ -298,11 +303,13 @@ export default {
     }
 
     .list-close {
+      border-top: 1px solid $text-color-xs;
       text-align: center;
       line-height: 50px;
       background: $color-bg;
       font-size: $font-size-lg;
-      color: $color-text-l;
+      font-family: $font-family;
+      color: $theme-color;
     }
   }
 }

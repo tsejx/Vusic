@@ -86,7 +86,7 @@ export default {
 </script>
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
-@import '~common/stylus/variable';
+@import '~styles/variable';
 
 .progress-bar {
   height: 30px;
@@ -100,7 +100,7 @@ export default {
     .progress {
       position: absolute;
       height: 100%;
-      background: $color-theme;
+      background: $theme-color;
     }
 
     .progress-btn-wrapper {
@@ -117,9 +117,9 @@ export default {
         box-sizing: border-box;
         width: 16px;
         height: 16px;
-        border: 3px solid $color-text;
+        border: 2px solid $text-color;
         border-radius: 50%;
-        background: $color-theme;
+        background: $theme-color;
       }
     }
   }

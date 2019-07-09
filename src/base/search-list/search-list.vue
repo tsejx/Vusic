@@ -32,8 +32,8 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-@import '~common/stylus/variable';
-@import '~common/stylus/mixin';
+@import '~styles/variable';
+@import '~styles/mixin';
 
 .search-list {
   .search-item {
@@ -60,7 +60,7 @@ export default {
 
       .icon-delete {
         font-size: $font-size-sm;
-        color: $color-text-d;
+        color: $text-color-md;
       }
     }
   }

@@ -45,7 +45,7 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-@import '~common/stylus/variable';
+@import '~styles/variable';
 
 .search-bar {
   display: flex;
@@ -69,7 +69,7 @@ export default {
     margin: 0 5px;
     line-height: 18px;
     color: $text-color;
-    font-size: $font-size-base;
+    font-size: $font-size;
     outline: 0;
 
     &::placeholder {

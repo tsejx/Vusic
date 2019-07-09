@@ -120,7 +120,7 @@ export default {
 </script>
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
-@import '~common/stylus/variable';
+@import '~styles/variable';
 
 .slider {
   min-height: 1px;

@@ -164,8 +164,8 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-@import '~common/stylus/variable';
-@import '~common/stylus/mixin';
+@import '~styles/variable';
+@import '~styles/mixin';
 
 .suggest {
   height: 100%;
@@ -199,7 +199,7 @@ export default {
 
       .suggest-text {
         no-wrap();
-        font-size: $font-size-base;
+        font-size: $font-size;
       }
     }
   }

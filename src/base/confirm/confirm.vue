@@ -55,7 +55,7 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-@import '~common/stylus/variable';
+@import '~styles/variable';
 
 .confirm {
   position: fixed;
@@ -105,7 +105,7 @@ export default {
           line-height: 22px;
           padding: 10px 0;
           border-top: 1px solid $color-background-d;
-          color: $color-text-d;
+          color: $text-color-md;
 
           &.left {
             border-right: 1px solid $color-background-d;

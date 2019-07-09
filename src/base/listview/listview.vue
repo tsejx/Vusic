@@ -193,7 +193,7 @@ export default {
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus" scoped>
-@import '~common/stylus/variable';
+@import '~styles/variable';
 
 .listview {
   position: relative;
@@ -256,7 +256,7 @@ export default {
       color: $text-color;
       font-size: $font-size-sm;
       &.current {
-        color: $color-theme;
+        color: $;
         font-weight: bold;
       }
     }

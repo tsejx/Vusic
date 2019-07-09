@@ -35,7 +35,7 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-@import '~common/stylus/variable';
+@import '~styles/variable';
 
 .notification{
   position: fixed;

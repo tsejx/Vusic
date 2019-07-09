@@ -7,19 +7,19 @@
       <div class="switches-wrapper">
         <switches :options="switchOptions" :currentIndex="currentIndex" @switch="onSwitchItem"></switches>
       </div>
-      <div class="play-btn" ref="playBtn" @click="onRandom">
+      <div class="play-button" ref="playBtn" @click="onRandom">
         <i class="icon-play"></i>
         <span class="text">随机播放全部</span>
       </div>
       <div class="list-wrapper" ref="listWrapper">
         <scroll class="list-scroll" ref="favoriteList" :data="favoriteList" v-if="currentIndex===0">
           <div class="list-inner">
-            <song-list :songs="favoriteList" @select="onSelectSong"></song-list>
+            <song-list :songs="favoriteList" @select="handleSongSelect"></song-list>
           </div>
         </scroll>
         <scroll class="list-scroll" ref="playList" :data="playHistory" v-if="currentIndex===1">
           <div class="list-inner">
-            <song-list :songs="playHistory" @select="onSelectSong"></song-list>
+            <song-list :songs="playHistory" @select="handleSongSelect"></song-list>
           </div>
         </scroll>
       </div>
@@ -38,6 +38,12 @@ import SongList from 'base/song-list/song-list';
 import NoResult from 'base/no-result/no-result';
 
 export default {
+  components: {
+    Scroll,
+    Switches,
+    SongList,
+    NoResult,
+  },
   mixins: [playlistMixin],
   data() {
     return {
@@ -72,7 +78,7 @@ export default {
     onSwitchItem(nextIndex) {
       this.currentIndex = nextIndex;
     },
-    onSelectSong(song) {
+    handleSongSelect(song) {
       this.insertSong(song);
     },
     onBack() {
@@ -89,17 +95,11 @@ export default {
     },
     ...mapActions(['insertSong', 'randomPlay']),
   },
-  components: {
-    Scroll,
-    Switches,
-    SongList,
-    NoResult,
-  },
 };
 </script>
 
 <style lang="stylus" scoped>
-@import '~common/stylus/variable';
+@import '~styles/variable';
 
 .profile {
   position: fixed;
@@ -127,7 +127,7 @@ export default {
       display: block;
       padding: 10px;
       font-size: $font-size-xl;
-      color: $color-theme;
+      color: $;
     }
   }
 
@@ -135,14 +135,14 @@ export default {
     margin: 10px 0 30px 0;
   }
 
-  .play-btn {
+  .play-button {
     box-sizing: border-box;
     width: 135px;
     padding: 7px 0;
     margin: 0 auto;
     text-align: center;
-    border: 1px solid $color-text-l;
-    color: $color-text-l;
+    border: 1px solid $theme-color;
+    color: $theme-color;
     border-radius: 100px;
     font-size: 0;
 
@@ -157,6 +157,8 @@ export default {
       display: inline-block;
       vertical-align: middle;
       font-size: $font-size-sm;
+      font-family: $font-family;
+      font-weight: bold;
     }
   }
 

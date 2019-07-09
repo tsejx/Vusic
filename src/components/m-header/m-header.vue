@@ -15,14 +15,14 @@ export default {
 </script>
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
-@import '~common/stylus/variable';
-@import '~common/stylus/mixin';
+@import '~styles/variable';
+@import '~styles/mixin';
 
 .m-header {
   position: relative;
   height: 44px;
   text-align: center;
-  color: $color-theme;
+  color: $;
   font-size: 0;
 
   .icon {
@@ -53,7 +53,7 @@ export default {
       display: block;
       padding: 12px;
       font-size: 20px;
-      color: $color-theme;
+      color: $;
     }
   }
 }

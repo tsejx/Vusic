@@ -20,7 +20,7 @@ export default {
 };
 </script>
 <style scoped lang="stylus" rel="stylesheet/stylus">
-@import '~common/stylus/variable';
+@import '~styles/variable';
 
 .loading {
   display: flex;
@@ -34,7 +34,7 @@ export default {
   .desc {
     line-height: 20px;
     color: $theme-color;
-    font-size: $font-size-base;
+    font-size: $font-size;
     font-family: $font-family;
   }
 }

@@ -126,8 +126,8 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-@import '~common/stylus/variable';
-@import '~common/stylus/mixin';
+@import '~styles/variable';
+@import '~styles/mixin';
 
 .add-song {
   position: fixed;
@@ -165,7 +165,7 @@ export default {
         display: block;
         padding: 12px;
         font-size: 20px;
-        color: $color-theme;
+        color: $;
       }
     }
   }
@@ -206,7 +206,7 @@ export default {
 
     .icon-ok {
       font-size: $font-size-md;
-      color: $color-theme;
+      color: $;
       margin-right: 4px;
     }
 

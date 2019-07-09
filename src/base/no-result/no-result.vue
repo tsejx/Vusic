@@ -17,8 +17,8 @@
 </script>
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
-  @import "~common/stylus/variable"
-  @import "~common/stylus/mixin"
+  @import "~styles/variable"
+  @import "~styles/mixin"
 
   .no-result
     text-align: center
@@ -26,10 +26,10 @@
       width: 86px
       height: 90px
       margin: 0 auto
-      bg-image('no-result')
+      bg-image('404')
       background-size: 86px 90px
     .no-result-text
       margin-top: 30px
       font-size: $font-size-medium
-      color: $color-text-d
+      color: $text-color-md
 </style>

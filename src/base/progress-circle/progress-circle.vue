@@ -40,7 +40,7 @@ export default {
 </script>
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
-@import '~common/stylus/variable';
+@import '~styles/variable';
 
 .progress-circle {
   position: relative;
@@ -51,12 +51,12 @@ export default {
 
     &.progress-background {
       transform: scale(0.9);
-      stroke: $color-theme-d;
+      stroke: $-d;
     }
 
     &.progress-bar {
       transform: scale(0.9) rotate(-90deg);
-      stroke: $color-theme;
+      stroke: $;
     }
   }
 }

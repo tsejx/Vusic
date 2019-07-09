@@ -2,7 +2,7 @@
   <div class="song-list">
     <ul>
       <li
-        class="item"
+        class="song-item"
         v-for="(item, index) of songs"
         :key="item.id"
         @click="onSelectItem(item, index)"
@@ -38,7 +38,7 @@ export default {
       this.$emit('select', item, index);
     },
     getSongDescription(song) {
-      return `${song.singer} - ${song.album}`;
+      return `${song.singer} 《${song.album}》`;
     },
     getRankCls(index) {
       if (index <= 2) {
@@ -57,16 +57,17 @@ export default {
 </script>
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
-@import '~common/stylus/variable';
-@import '~common/stylus/mixin';
+@import '~styles/variable';
+@import '~styles/mixin';
 
 .song-list {
-  .item {
+  .song-item {
     display: flex;
     align-items: center;
     box-sizing: border-box;
     height: 64px;
     font-size: $font-size-md;
+    font-family: $font-family;
 
     .rank {
       flex: 0 0 25px;
@@ -94,7 +95,7 @@ export default {
       }
 
       .normal {
-        color: $color-theme;
+        color: $;
         font-size: $font-size-lg;
       }
     }
@@ -106,13 +107,17 @@ export default {
 
       .name {
         no-wrap();
-        color: $color-text;
+        color: $text-color;
+        font-size: $font-size-lg;
+        font-family: $font-family;
+        font-weight: bold;
       }
 
       .desc {
         no-wrap();
         margin-top: 4px;
-        color: $color-text-d;
+        color: $text-color-xs;
+        font-size: $font-size-sm;
       }
     }
   }
