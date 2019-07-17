@@ -2,8 +2,6 @@ import jsonp from 'common/js/jsonp'
 import { commonParams, options } from './config'
 import axios from 'axios'
 
-const debug = process.env.NODE_ENV !== 'production'
-
 export function getHotKey () {
   const url = 'https://c.y.qq.com/splcloud/fcgi-bin/gethotkey.fcg'
 
@@ -17,7 +15,7 @@ export function getHotKey () {
 }
 
 export function searchMusic (query, pageNo, zhida, pageSize) {
-  const url = debug ? '/api/search' : 'http://ustbhuangyi.com/music/api/search'
+  const url = '/api/search'
 
   const data = Object.assign({}, commonParams, {
     w: query,

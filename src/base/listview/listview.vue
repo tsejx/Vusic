@@ -70,7 +70,6 @@ export default {
       },
     },
   },
-
   data() {
     return {
       scrollY: -1,
@@ -195,12 +194,14 @@ export default {
 <style lang="stylus" rel="stylesheet/stylus" scoped>
 @import '~styles/variable';
 
+$header-background = linear-gradient(-225deg, #41B883 0%, #A7DCBF 100%);
+
 .listview {
   position: relative;
   width: 100%;
   height: 100%;
   overflow: hidden;
-  background: $color-bg;
+  background: $background-color;
 
   .list-group {
     padding-bottom: 30px;
@@ -212,7 +213,7 @@ export default {
       color: $white;
       font-size: $font-size-lg;
       font-weight: bold;
-      background: $theme-color;
+      background-image: $header-background;
     }
 
     .list-group-item {
@@ -255,8 +256,9 @@ export default {
       line-height: 1;
       color: $text-color;
       font-size: $font-size-sm;
+
       &.current {
-        color: $;
+        color: $theme-color;
         font-weight: bold;
       }
     }
@@ -275,7 +277,7 @@ export default {
       color: $white;
       font-size: $font-size-lg;
       font-weight: bold;
-      background: $theme-color;
+      background-image: $header-background;
     }
   }
 

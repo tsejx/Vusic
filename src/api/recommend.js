@@ -1,8 +1,7 @@
+/* eslint-disable no-console */
 import axios from 'axios';
 import jsonp from 'common/js/jsonp';
 import { commonParams, options } from './config';
-
-const debug = process.env.NODE_ENV !== 'production';
 
 export function getRecommend() {
   const url = 'https://c.y.qq.com/musichall/fcgi-bin/fcg_yqqhomepagerecommend.fcg';
@@ -17,7 +16,7 @@ export function getRecommend() {
 }
 
 export function getDiscList() {
-  const url = debug ? '/api/getDiscList' : 'http://ustbhuangyi.com/music/api/getDiscList';
+  const url = '/api/getDiscList';
 
   const data = Object.assign({}, commonParams, {
     platform: 'yqq',
@@ -40,8 +39,8 @@ export function getDiscList() {
     });
 }
 
-export function getSongList (disstid) {
-  const url = debug ? '/api/getCdInfo' : 'http://ustbhuangyi.com/music/api/getCdInfo'
+export function getSongList(disstid) {
+  const url = '/api/getCdInfo';
 
   const data = Object.assign({}, commonParams, {
     disstid,
@@ -51,12 +50,14 @@ export function getSongList (disstid) {
     onlysong: 0,
     platform: 'yqq',
     hostUin: 0,
-    needNewCode: 0
-  })
+    needNewCode: 0,
+  });
 
-  return axios.get(url, {
-    params: data
-  }).then((res) => {
-    return Promise.resolve(res.data)
-  })
+  return axios
+    .get(url, {
+      params: data,
+    })
+    .then(res => {
+      return Promise.resolve(res.data);
+    });
 }

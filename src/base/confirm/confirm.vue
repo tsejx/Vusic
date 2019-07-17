@@ -64,7 +64,7 @@ export default {
   top: 0;
   bottom: 0;
   z-index: 998;
-  background-color: $color-background-d;
+  background-color: $mask-background-color;
 
   &.confirm-fade-enter-active {
     animation: confirm-fadein 0.3s;
@@ -84,13 +84,13 @@ export default {
     .confirm-content {
       width: 270px;
       border-radius: 13px;
-      background: $color-highlight-bg;
+      background: $white;
 
       .text {
         padding: 19px 15px;
         line-height: 22px;
         text-align: center;
-        font-size: $font-size-large;
+        font-size: $font-size-lg;
         color: $color-text-l;
       }
 
@@ -98,17 +98,17 @@ export default {
         display: flex;
         align-items: center;
         text-align: center;
-        font-size: $font-size-large;
+        font-size: $font-size-lg;
 
         .operate-btn {
           flex: 1;
           line-height: 22px;
           padding: 10px 0;
-          border-top: 1px solid $color-background-d;
-          color: $text-color-md;
+          border-top: 1px solid $gray-500;
+          color: $text-color;
 
           &.left {
-            border-right: 1px solid $color-background-d;
+            border-right: 1px solid $gray-500;
           }
         }
       }

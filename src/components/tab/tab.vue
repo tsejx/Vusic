@@ -34,6 +34,7 @@ export default {};
 
     .tab-text {
       padding-bottom: 5px;
+      color: $text-color;
       font-family: $font-family;
       font-weight: bold;
     }

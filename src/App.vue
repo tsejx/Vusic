@@ -3,11 +3,9 @@
     <m-header></m-header>
     <tab></tab>
     <!-- 路由匹配到的组件将渲染在这里 -->
-    <!-- <transition name="slide-fade"> -->
-      <keep-alive>
-        <router-view></router-view>
-      </keep-alive>
-    <!-- </transition> -->
+    <keep-alive>
+      <router-view></router-view>
+    </keep-alive>
     <player></player>
   </div>
 </template>

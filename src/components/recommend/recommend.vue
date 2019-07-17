@@ -190,8 +190,9 @@ export default {
 
       .recommend-name {
         margin-bottom: 10px;
-        color: $color-text;
+        color: $text-color;
         font-size: $font-size-md;
+        font-weight: bold;
       }
 
       .recommend-desc {

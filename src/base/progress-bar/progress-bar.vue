@@ -58,6 +58,7 @@ export default {
         Math.max(0, this.touch.left + deltaX)
       );
       this._handleProgressOffset(offsetWidth);
+      this.$emit('changing', this._getPercent())
     },
     onTouchEnd(e) {
       this.touch.initiated = false;
@@ -117,7 +118,7 @@ export default {
         box-sizing: border-box;
         width: 16px;
         height: 16px;
-        border: 2px solid $text-color;
+        border: 2px solid $white;
         border-radius: 50%;
         background: $theme-color;
       }

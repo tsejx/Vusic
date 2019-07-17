@@ -135,7 +135,7 @@ export default {
   bottom: 0;
   width: 100%;
   z-index: 200;
-  background: $color-bg;
+  background: $background-color;
 
   &.slide-enter-active, &.slide-leave-active {
     transition: all 0.3s;

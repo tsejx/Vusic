@@ -69,7 +69,7 @@ export default {
   right: 0;
   bottom: 0;
   left: 0;
-  background: $color-bg;
+  background: $background-color;
 }
 
 .slide-enter-active, .slide-leave-active {

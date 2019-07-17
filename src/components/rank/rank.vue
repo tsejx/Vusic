@@ -3,7 +3,7 @@
     <scroll class="rank-list" ref="scroll" :data="rankList">
       <ul>
         <li
-          class="rank-item"
+          class="rank-card"
           v-for="item of rankList"
           :key="item.id"
           @click="handleRankingSelect(item)"
@@ -11,9 +11,9 @@
           <div class="rank-cover">
             <img width="100" height="100" :src="item.picUrl" />
           </div>
-          <ul class="song-list">
-            <li class="song-cell" v-for="(song,index) of item.songList" :key="song.id">
-              <span>{{index+1}}.</span>
+          <ul class="rank-song-list">
+            <li class="rank-song-cell" v-for="(song,index) of item.songList" :key="song.id">
+              <span>{{index+1}}. </span>
               <span>{{song.singername + ' - ' + song.songname}}</span>
             </li>
           </ul>
@@ -89,7 +89,7 @@ export default {
     height: 100%;
     overflow: hidden;
 
-    .rank-item {
+    .rank-card {
       display: flex;
       justify-content: between;
       margin: 0 20px;
@@ -105,7 +105,7 @@ export default {
         height: 100px;
       }
 
-      .song-list {
+      .rank-song-list {
         flex: 1;
         display: flex;
         flex-direction: column;
@@ -113,11 +113,11 @@ export default {
         padding: 0 20px;
         height: 100px;
         overflow: hidden;
-        color: $theme-color;
+        color: $text-color;
         font-size: $font-size-sm;
         font-family: $font-family;
 
-        .song-cell {
+        .rank-song-cell {
           no-wrap();
           line-height: 26px;
         }

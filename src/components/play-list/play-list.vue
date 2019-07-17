@@ -306,7 +306,7 @@ export default {
       border-top: 1px solid $text-color-xs;
       text-align: center;
       line-height: 50px;
-      background: $color-bg;
+      background: $background-color;
       font-size: $font-size-lg;
       font-family: $font-family;
       color: $theme-color;

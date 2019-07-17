@@ -26,7 +26,7 @@
       @scroll="onScroll"
     >
       <div class="song-list-wrapper">
-        <song-list :rank="rank" :songs="songs" @select="onSelectItem"></song-list>
+        <song-list :rank="rank" :songs="songs" @select="handleSongSelect"></song-list>
       </div>
       <div v-show="!songs.length" class="loading-container">
         <loading></loading>
@@ -130,7 +130,7 @@ export default {
         list: this.songs,
       });
     },
-    onSelectItem(item, index) {
+    handleSongSelect(item, index) {
       this.selectPlay({
         list: this.songs,
         index,
@@ -161,7 +161,7 @@ export default {
   left: 0;
   bottom: 0;
   right: 0;
-  background: $color-bg;
+  background: $background-color;
 
   .back {
     position: absolute;
@@ -186,8 +186,9 @@ export default {
     text-align: center;
     line-height: 40px;
     color: $white;
-    font-size: $font-size;
+    font-size: $font-size-lg;
     font-family: $font-family;
+    font-weight: bold;
     no-wrap();
   }
 
@@ -246,7 +247,7 @@ export default {
   .bg-layer {
     position: relative;
     height: 100%;
-    background: $color-bg;
+    background: $background-color;
   }
 
   .list {
@@ -254,7 +255,7 @@ export default {
     top: 0;
     bottom: 0;
     width: 100%;
-    background: $color-bg;
+    background: $background-color;
 
     .song-list-wrapper {
       padding: 20px 30px;

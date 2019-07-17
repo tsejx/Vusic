@@ -2,9 +2,9 @@
   <div class="player" v-show="playlist.length>0">
     <transition
       name="normal"
-      @enter="enter"
+      @enter="transitionEnter"
       @after-enter="afterEnter"
-      @leave="leave"
+      @leave="transitionLeave"
       @after-leave="afterLeave"
     >
       <div class="normal-player" v-show="isFullScreen">
@@ -39,7 +39,11 @@
             </div>
           </div>
           <!-- 歌词 -->
-          <scroll class="lyric-container" ref="lyricList" :data="currentLyric && currentLyric.lines">
+          <scroll
+            class="lyric-container"
+            ref="lyricList"
+            :data="currentLyric && currentLyric.lines"
+          >
             <div class="lyric-viewport">
               <div v-if="currentLyric">
                 <p
@@ -49,6 +53,9 @@
                   :class="{'current': currentLine === index}"
                   :key="index"
                 >{{line.txt}}</p>
+              </div>
+              <div class="pure-music" v-show="isPureMusic">
+                <p>{{pureMusicLyric}}</p>
               </div>
             </div>
           </scroll>
@@ -63,7 +70,12 @@
           <div class="progress-wrapper">
             <span class="time time-left">{{format(currentTime)}}</span>
             <div class="progress-bar-wrapper">
-              <progress-bar ref="progressBar" :percent="percent" @change="onProgressChange"></progress-bar>
+              <progress-bar
+                ref="progressBar"
+                :percent="percent"
+                @change="onProgressChange"
+                @changing="onProgressChanging"
+              ></progress-bar>
             </div>
             <span class="time time-right">{{format(currentSong.duration)}}</span>
           </div>
@@ -128,10 +140,11 @@
     <audio
       ref="audio"
       :src="currentSong.url"
-      @play="onReady"
+      @playing="onReady"
       @error="onError"
       @timeupdate="updateTime"
       @ended="onEnd"
+      @pause="onPaused"
     ></audio>
   </div>
 </template>
@@ -162,12 +175,15 @@ export default {
   mixins: [playerMixin],
   data() {
     return {
-      canPlay: false,
+      canSongPlay: false,
       currentTime: 0,
+      radius: 32,
       currentLyric: null,
       currentLine: 0,
       currentShow: 'record',
       playingLyric: '',
+      isPureMusic: false,
+      pureMusicLyric: '',
     };
   },
   computed: {
@@ -181,7 +197,7 @@ export default {
       return this.playing ? 'icon-pause-mini' : 'icon-play-mini';
     },
     disabeldCls() {
-      return this.canPlay ? '' : 'disable';
+      return this.canSongPlay ? '' : 'disable';
     },
     percent() {
       return this.currentTime / this.currentSong.duration;
@@ -198,23 +214,30 @@ export default {
   },
   watch: {
     currentSong(newSong, oldSong) {
-      if (!newSong.id) {
+      if (!newSong.id || newSong.id === oldSong.id) {
         return;
       }
-      if (newSong.id === oldSong.id) {
-        return;
-      }
+      this.canSongPlay = false;
+      this.canLyricPlay = false;
       if (this.currentLyric) {
         this.currentLyric.stop();
+        // 重置为null
+        this.currentLyric = null;
+        this.currentTime = 0;
+        this.playingLyric = '';
+        this.currentLineNum = 0;
       }
+      this.$refs.audio.src = newSong.url;
+      // 若歌曲 3s 未播放，则认为超时，修改状态确保可以切换歌曲
       clearTimeout(this.timer);
       this.timer = setTimeout(() => {
         this.$refs.audio.play();
-        this.getSongLyric();
+        this.canSongPlay = true;
       }, 1000);
+      this.getSongLyric();
     },
     playing(newPlaying) {
-      if (!this.canPlay) {
+      if (!this.canSongPlay) {
         return;
       }
       const audio = this.$refs.audio;
@@ -234,6 +257,225 @@ export default {
     this.touch = {};
   },
   methods: {
+    // 返回上一页
+    onBack() {
+      this.setFullScreen(false);
+    },
+    // 从迷你播放器打开播放器
+    onOpen() {
+      this.setFullScreen(true);
+    },
+    // 下首歌曲
+    onNext() {
+      if (!this.canSongPlay) {
+        return;
+      }
+      if (this.playlist.length === 1) {
+        this.onLoop();
+        return;
+      } else {
+        let index = this.currentIndex + 1;
+        if (index === this.playlist.length) {
+          index = 0;
+        }
+        this.setCurrentIndex(index);
+        if (!this.playing) {
+          this.onToggle();
+        }
+      }
+      // this.canSongPlay = false;
+    },
+    // 上首歌曲
+    onPrev() {
+      if (!this.canSongPlay) {
+        return;
+      }
+      if (this.playlist.length === 1) {
+        // 播放列表中仅有一首歌曲时循环播放
+        // 并且禁用切换歌曲按钮
+        this.onLoop();
+        return;
+      } else {
+        let index = this.currentIndex - 1;
+        if (index === -1) {
+          index = this.playlist.length - 1;
+        }
+        this.setCurrentIndex(index);
+        if (!this.playing) {
+          this.onToggle();
+        }
+      }
+      // this.canSongPlay = false;
+    },
+    onReady() {
+      clearTimeout(this.timer);
+      // 监听 playing 这个事件可以确保慢网速或者快速切换歌曲导致的 DOM Exception
+      this.canSongPlay = true;
+      this.canLyricPlay = true;
+
+      this.savePlayHistory(this.currentSong);
+      // 如果歌曲的播放晚于歌词的出现，播放的时候需要同步歌词
+      if (this.currentLyric && !this.isPureMusic) {
+        this.currentLyric.seek(this.currentTime * 1000);
+      }
+    },
+    onPaused() {
+      this.setPlayingState(false);
+      if (this.currentLyric) {
+        this.currentLyric.stop();
+      }
+    },
+    onError() {
+      clearTimeout(this.timer);
+      this.canSongPlay = true;
+    },
+    onEnd() {
+      this.currentTime = 0;
+      if (this.mode === playMode.loop) {
+        this.onLoop();
+      } else {
+        this.onNext();
+      }
+    },
+    onLoop() {
+      this.$refs.audio.currentTime = 0;
+      this.$refs.audio.play();
+      if (this.currentLyric) {
+        this.currentLyric.seek(0);
+      }
+    },
+    onToggle() {
+      if (!this.canSongPlay) {
+        return;
+      }
+      this.setPlayingState(!this.playing);
+      if (this.currentLyric) {
+        this.currentLyric.togglePlay();
+      }
+    },
+    updateTime(e) {
+      this.currentTime = e.target.currentTime;
+    },
+    onProgressChanging() {
+      this.currentTime = this.currentSong.duration * percent;
+      if (this.currentLyric) {
+        this.currentLyric.seek(this.currentTime * 1000);
+      }
+    },
+    onProgressChange(percent) {
+      const currentTime = this.currentSong.duration * percent;
+      this.currentTime = this.$refs.audio.currentTime = currentTime;
+      if (this.currentLyric) {
+        this.currentLyric.seek(currentTime * 1000);
+      }
+      if (!this.playing) {
+        this.onToggle();
+      }
+    },
+    transitionEnter(el, done) {
+      const { x, y, scale } = this._getPositionAndScroll();
+
+      let animation = {
+        0: {
+          transform: `translate3d(${x}px,${y}px,0) scale(${scale})`,
+        },
+        60: {
+          transform: `translate3d(0,0,0) scale(1.1)`,
+        },
+        100: {
+          transform: `translate3d(0,0,0) scale(1)`,
+        },
+      };
+
+      animations.registerAnimation({
+        name: 'move',
+        animation,
+        presets: {
+          duration: 400,
+          easing: 'linear',
+        },
+      });
+
+      animations.runAnimation(this.$refs.recordWrapper, 'move', done);
+    },
+    afterEnter() {
+      animations.unregisterAnimation('move');
+      this.$refs.recordWrapper.style.animation = '';
+    },
+    transitionLeave(el, done) {
+      this.$refs.recordWrapper.style.animation = 'all 0.4s';
+      const { x, y, scale } = this._getPositionAndScroll();
+      this.$refs.recordWrapper.style[transform] = `translate3d(${x}px,${y}px,0) scale(${scale})`;
+      const timer = setTimeout(done, 400);
+      this.$refs.recordWrapper.addEventListener('transitionEnd', () => {
+        clearTimeout(timer);
+        done();
+      });
+    },
+    afterLeave() {
+      this.$refs.recordWrapper.style.transition = '';
+      this.$refs.recordWrapper.style[transform] = '';
+    },
+    format(interval) {
+      interval = interval | 0;
+      const min = (interval / 60) | 0;
+      const sec = (interval % 60).toString().padStart(2, '0');
+      return `${min}:${sec}`;
+    },
+    // 获取歌曲歌词
+    getSongLyric() {
+      this.currentSong
+        .getLyric()
+        .then(lyric => {
+          // 防止切换歌曲导致异步执行的歌词获取操作的问题
+          if (this.currentSong.lyric !== lyric) {
+            return;
+          }
+          this.currentLyric = new Lyric(lyric, this.handleLyricHightlight);
+          this.isPureMusic = !this.currentLyric.lines.length;
+          if (this.isPureMusic) {
+            this.pureMusicLyric = this.currentLyric.lrc.replace(timeExp, '').trim();
+            this.playingLyric = this.pureMusicLyric;
+          } else {
+            if (this.playing && this.canLyricPlay) {
+              // 这个时候有可能用户已经播放了歌曲，要切到对应位置
+              this.currentLyric.seek(this.currentTime * 1000);
+            }
+          }
+        })
+        .catch(() => {
+          this.currentLyric = null;
+          this.playingLyric = '';
+          this.currentLineNum = 0;
+        });
+    },
+    // 歌词改变时回调，让当前歌词高亮
+    handleLyricHightlight({ lineNum, txt }) {
+      this.currentLine = lineNum;
+      // 大于五行时歌词向上滚动
+      if (lineNum > 5) {
+        // 保证高亮歌词居中
+        let lineEl = this.$refs.lyricLine[lineNum - 5];
+        this.$refs.lyricList.scrollToElement(lineEl, 1000);
+      } else {
+        this.$refs.lyricList.scrollTo(0, 0, 1000);
+      }
+      this.playingLyric = txt;
+    },
+    syncWrapperTransform(wrapper, inner) {
+      if (!this.$refs[wrapper]) {
+        return;
+      }
+      let imageWrapper = this.$refs[wrapper];
+      let image = this.$refs[inner];
+      let wTransform = getComputedStyle(imageWrapper)[transform];
+      let iTransform = getComputedStyle(image)[transform];
+      imageWrapper.style[transform] =
+        wTransform === 'none' ? iTransform : iTransform.concat(' ', wTransform);
+    },
+    showPlayList() {
+      this.$refs.playlist.show();
+    },
     onTouchStart(e) {
       this.touch.initiated = true;
       // 用来判断是否是一次移动
@@ -297,184 +539,6 @@ export default {
       this.$refs.recordCover.style[transitionDuration] = `${time}ms`;
       this.touch.initiated = false;
     },
-    onBack() {
-      this.setFullScreen(false);
-    },
-    onOpen() {
-      this.setFullScreen(true);
-    },
-    onNext() {
-      if (!this.canPlay) {
-        return;
-      }
-      if (this.playlist.length === 1) {
-        this.onLoop();
-        return;
-      } else {
-        let index = this.currentIndex + 1;
-        if (index === this.playlist.length) {
-          index = 0;
-        }
-        this.setCurrentIndex(index);
-        if (!this.playing) {
-          this.onToggle();
-        }
-      }
-      this.canPlay = false;
-    },
-    onPrev() {
-      if (!this.canPlay) {
-        return;
-      }
-      if (this.playlist.length === 1) {
-        // 播放列表中仅有一首歌曲时循环播放
-        // 并且禁用切换歌曲按钮
-        this.onLoop();
-        return;
-      } else {
-        let index = this.currentIndex - 1;
-        if (index === -1) {
-          index = this.playlist.length - 1;
-        }
-        this.setCurrentIndex(index);
-        if (!this.playing) {
-          this.onToggle();
-        }
-      }
-      this.canPlay = false;
-    },
-    onReady() {
-      this.canPlay = true;
-      this.savePlayHistory(this.currentSong);
-    },
-    onError() {
-      this.canPlay = true;
-    },
-    onEnd() {
-      if (this.mode === playMode.loop) {
-        this.onLoop();
-      } else {
-        this.onNext();
-      }
-    },
-    onLoop() {
-      this.$refs.audio.currentTime = 0;
-      this.$refs.audio.play();
-      if (this.currentLyric) {
-        this.currentLyric.seek(0);
-      }
-    },
-    onToggle() {
-      if (!this.canPlay) {
-        return;
-      }
-      this.setPlayingState(!this.playing);
-      if (this.currentLyric) {
-        this.currentLyric.togglePlay();
-      }
-    },
-    updateTime(e) {
-      this.currentTime = e.target.currentTime;
-    },
-    onProgressChange(percent) {
-      const currentTime = this.currentSong.duration * percent;
-      this.$refs.audio.currentTime = currentTime;
-      if (this.currentLyric) {
-        this.currentLyric.seek(currentTime * 1000);
-      }
-      if (!this.playing) {
-        this.onToggle();
-      }
-    },
-    enter(el, done) {
-      const { x, y, scale } = this._getPositionAndScroll();
-
-      let animation = {
-        0: {
-          transform: `translate3d(${x}px,${y}px,0) scale(${scale})`,
-        },
-        60: {
-          transform: `translate3d(0,0,0) scale(1.1)`,
-        },
-        100: {
-          transform: `translate3d(0,0,0) scale(1)`,
-        },
-      };
-
-      animations.registerAnimation({
-        name: 'move',
-        animation,
-        presets: {
-          duration: 400,
-          easing: 'linear',
-        },
-      });
-
-      animations.runAnimation(this.$refs.recordWrapper, 'move', done);
-    },
-    afterEnter() {
-      animations.unregisterAnimation('move');
-      this.$refs.recordWrapper.style.animation = '';
-    },
-    leave(el, done) {
-      this.$refs.recordWrapper.style.animation = 'all 0.4s';
-      const { x, y, scale } = this._getPositionAndScroll();
-      this.$refs.recordWrapper.style[transform] = `translate3d(${x}px,${y}px,0) scale(${scale})`;
-      const timer = setTimeout(done, 400);
-      this.$refs.recordWrapper.addEventListener('transitionEnd', () => {
-        clearTimeout(timer);
-        done();
-      });
-    },
-    afterLeave() {
-      this.$refs.recordWrapper.style.transition = '';
-      this.$refs.recordWrapper.style[transform] = '';
-    },
-    format(interval) {
-      interval = interval | 0;
-      const min = (interval / 60) | 0;
-      const sec = (interval % 60).toString().padStart(2, '0');
-      return `${min}:${sec}`;
-    },
-    getSongLyric() {
-      this.currentSong.getLyric().then(lyric => {
-        // 防止切换歌曲导致异步执行的歌词获取操作的问题
-        if (this.currentSong.lyric !== lyric) {
-          return;
-        }
-        this.currentLyric = new Lyric(lyric, this.handleLyricHightlight);
-        if (this.playing) {
-          this.currentLyric.play();
-        }
-      });
-    },
-    // 歌词改变时回调，让当前歌词高亮
-    handleLyricHightlight({ lineNum, txt }) {
-      this.currentLine = lineNum;
-      // 大于五行时歌词向上滚动
-      if (lineNum > 5) {
-        // 保证高亮歌词居中
-        let lineEl = this.$refs.lyricLine[lineNum - 5];
-        this.$refs.lyricList.scrollToElement(lineEl, 1000);
-      } else {
-        this.$refs.lyricList.scrollTo(0, 0, 1000);
-      }
-      this.playingLyric = txt;
-    },
-    syncWrapperTransform(wrapper, inner) {
-      if (!this.$refs[wrapper]) {
-        return;
-      }
-      let imageWrapper = this.$refs[wrapper];
-      let image = this.$refs[inner];
-      let wTransform = getComputedStyle(imageWrapper)[transform];
-      let iTransform = getComputedStyle(image)[transform];
-      imageWrapper.style[transform] =
-        wTransform === 'none' ? iTransform : iTransform.concat(' ', wTransform);
-    },
-    showPlayList() {
-      this.$refs.playlist.show();
-    },
     _getPositionAndScroll() {
       const targetWidth = 40;
       const paddingLeft = 40;
@@ -514,7 +578,7 @@ export default {
     top: 0;
     bottom: 0;
     z-index: 150;
-    background: $color-bg;
+    background: $background-color;
 
     .background {
       position: absolute;
@@ -541,7 +605,7 @@ export default {
           display: block;
           padding: 9px;
           font-size: $font-size-xl;
-          color: $;
+          color: $text-color;
           transform: rotate(-90deg);
         }
       }
@@ -552,9 +616,10 @@ export default {
         line-height: 40px;
         text-align: center;
         no-wrap();
+        color: $text-color;
         font-size: $font-size-lg;
         font-family: $font-family;
-        color: $white;
+        font-weight: bold;
       }
 
       .song-subtitle {
@@ -562,7 +627,8 @@ export default {
         text-align: center;
         font-size: $font-size-md;
         font-family: $font-family;
-        color: $white;
+        font-weight: bold;
+        color: $text-color;
       }
     }
 
@@ -623,8 +689,7 @@ export default {
             line-height: 20px;
             font-size: $font-size-md;
             font-family: $font-family;
-            // color: $text-color;
-            color: $white;
+            color: $text-color;
           }
         }
       }
@@ -644,11 +709,11 @@ export default {
 
           .lyric-text {
             line-height: 32px;
-            color: $color-text-l;
+            color: $text-color;
             font-size: $font-size-md;
 
             &.current {
-              color: $color-text;
+              color: $white;
             }
           }
 
@@ -696,8 +761,10 @@ export default {
         padding: 10px 0;
 
         .time {
-          color: $color-text;
+          color: $text-color;
           font-size: $font-size-sm;
+          font-family: $font-family;
+          font-weight: bold;
           flex: 0 0 30px;
           line-height: 30px;
           width: 30px;
@@ -722,7 +789,7 @@ export default {
 
         .icon {
           flex: 1;
-          color: $;
+          color: $theme-color;
 
           &.disable {
             color: $text-color-md;

@@ -1,6 +1,7 @@
 <template>
   <div class="singer" ref="singer">
-    <list-view @select="onSingerSelect" :data="singers" ref="list"></list-view>
+    <list-view @select="handleSingSelect" :data="singers" ref="list"></list-view>
+    <!-- 歌手详情 -->
     <router-view></router-view>
   </div>
 </template>
@@ -21,11 +22,9 @@ export default {
     ListView,
   },
   mixins: [playlistMixin],
-  data() {
-    return {
-      singers: [],
-    };
-  },
+  data: () => ({
+    singers: [],
+  }),
   created() {
     this.loadData();
   },
@@ -88,7 +87,8 @@ export default {
       });
       return hot.concat(ret);
     },
-    onSingerSelect(singer) {
+    handleSingSelect(singer) {
+      // 跳转至歌手详情页
       this.$router.push({
         path: `/singer/${singer.id}`,
       });

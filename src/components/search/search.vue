@@ -8,18 +8,18 @@
     <div class="shortcut-wrapper" ref="shortcutWrapper" v-show="!searchText">
       <scroll class="shortcut" ref="shortcut" :data="shortcut" :refreshDelay="refreshDelay">
         <div>
-          <div class="hot-key">
-            <div class="hot-title">热门搜索</div>
+          <div class="popular-key">
+            <div class="popular-title">热门搜索</div>
             <ul>
               <li
-                class="hot-item"
+                class="popular-item"
                 v-for="item of hotKey"
                 :key="item.id"
                 @click="onHotKeySelect(item.k)"
               >{{item.k}}</li>
             </ul>
           </div>
-
+          <!-- 搜索历史 -->
           <div class="search-history" v-show="searchHistory.length">
             <h1 class="history-title">
               <span class="history-text">搜索历史</span>
@@ -134,28 +134,27 @@ export default {
       height: 100%;
       overflow: hidden;
 
-      .hot-key {
+      .popular-key {
         margin: 0 20px 20px 20px;
 
-        .hot-title {
+        .popular-title {
           margin-bottom: 20px;
           text-align: left;
-          color: $black;
+          color: $header-color;
           font-size: $font-size-xl;
           font-family: $font-family;
           font-weight: bold;
         }
 
-        .hot-item {
+        .popular-item {
           display: inline-block;
           padding: 5px 10px;
           margin: 0 20px 10px 0;
           border-radius: 6px;
-          background: #D9DAF0;
-          color: #5E60D1;
+          background: $theme-color-sm;
+          color: $text-color;
           font-size: $font-size-md;
-          font-family: $family;
-          font-weight: bold;
+          font-family: $font-family;
         }
       }
 
@@ -170,7 +169,7 @@ export default {
 
           .history-text {
             flex: 1;
-            color: $black;
+            color: $text-color;
             font-size: $font-size-xl;
             font-family: $font-family;
             font-weight: bold;
