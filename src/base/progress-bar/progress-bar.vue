@@ -118,7 +118,7 @@ export default {
         box-sizing: border-box;
         width: 16px;
         height: 16px;
-        border: 2px solid $white;
+        border: 2px solid $theme-color-sm;
         border-radius: 50%;
         background: $theme-color;
       }

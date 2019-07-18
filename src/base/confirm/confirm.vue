@@ -90,8 +90,10 @@ export default {
         padding: 19px 15px;
         line-height: 22px;
         text-align: center;
+        color: $text-color;
         font-size: $font-size-lg;
-        color: $color-text-l;
+        font-family: $font-family;
+        font-weight: bold;
       }
 
       .operate {
@@ -99,6 +101,7 @@ export default {
         align-items: center;
         text-align: center;
         font-size: $font-size-lg;
+        font-family: $font-family;
 
         .operate-btn {
           flex: 1;

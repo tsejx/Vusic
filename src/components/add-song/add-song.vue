@@ -153,7 +153,9 @@ export default {
     .title {
       line-height: 44px;
       font-size: $font-size-lg;
-      color: $color-text;
+      font-family: $font-family;
+      font-weight: bold;
+      color: $text-color;
     }
 
     .close {

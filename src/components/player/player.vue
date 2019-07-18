@@ -205,7 +205,6 @@ export default {
     ...mapGetters([
       'isFullScreen',
       'playlist',
-      'currentSong',
       'playing',
       'currentIndex',
       'mode',
@@ -720,7 +719,7 @@ export default {
           .pure-music {
             padding-top: 50%;
             line-height: 32px;
-            color: $color-text-l;
+            color: $text-color;
             font-size: $font-size-md;
           }
         }
@@ -743,12 +742,12 @@ export default {
           width: 8px;
           height: 8px;
           border-radius: 50%;
-          background: $color-text-l;
+          background: rgba(255, 255, 255, 0.5);
 
           &.active {
             width: 20px;
             border-radius: 5px;
-            background: $color-text-ll;
+            background: rgba(255, 255, 255, 0.8);
           }
         }
       }
@@ -899,9 +898,10 @@ export default {
       .name {
         margin-bottom: 2px;
         no-wrap();
-        color: $color-text;
+        color: $text-color;
         font-size: $font-size-md;
         font-family: $font-family;
+        font-weight: bold;
       }
 
       .desc {

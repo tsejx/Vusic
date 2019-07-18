@@ -90,7 +90,7 @@ export default {
         return;
       }
       this.randomPlay({
-        list,
+        list
       });
     },
     ...mapActions(['insertSong', 'randomPlay']),

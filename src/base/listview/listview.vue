@@ -248,7 +248,7 @@ $header-background = linear-gradient(-225deg, #119865 0%, #A7DCBF 100%);
     padding: 20px 0;
     border-radius: 10px;
     text-align: center;
-    background: $color-background-d;
+    background: rgba($theme-color-sm, .3);
     font-family: Helvetica;
 
     .alphabet-item {

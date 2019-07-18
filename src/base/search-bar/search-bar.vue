@@ -55,8 +55,6 @@ export default {
   padding: 0 6px;
   height: 40px;
   border-radius: 6px;
-  // border: 2px solid $theme-color;
-  font-family: $font-family;
   box-shadow: $shadow-sm;
 
   .icon-search {

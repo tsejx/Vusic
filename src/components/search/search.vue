@@ -106,7 +106,7 @@ export default {
     _loadHotKey() {
       getHotKey().then(res => {
         if (res.code === ERR_OK) {
-          this.hotKey = res.data.hotkey.slice(0, 10);
+          this.hotKey = res.data.hotkey.slice(0, 15);
         }
       });
     },

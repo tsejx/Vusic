@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import axios from 'axios';
 import jsonp from 'common/js/jsonp';
 import { commonParams, options } from './config';
