@@ -16,7 +16,7 @@
 
 <script type="ecmascript-6">
 import BScroll from 'better-scroll';
-import { addClass } from 'common/js/dom';
+import { addClass } from 'utils';
 import { setTimeout, clearTimeout } from 'timers';
 export default {
   data() {

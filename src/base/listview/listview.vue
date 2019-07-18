@@ -52,7 +52,7 @@
 <script type="text/ecmascript-6">
 import Scroll from 'base/scroll/scroll';
 import Loading from 'base/loading/loading';
-import { getData } from 'common/js/dom';
+import { getData } from 'utils';
 
 const TITLE_HEIGHT = 30;
 const ANCHOR_HEIGHT = 18;
@@ -183,9 +183,6 @@ export default {
         height += item.clientHeight;
         this.listHeight.push(height);
       }
-    },
-    refresh() {
-      this.$refs.listview.refresh();
     },
   },
 };

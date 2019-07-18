@@ -16,7 +16,7 @@
 </template>
 
 <script type="text/ecmascript-6">
-import { prefixStyle } from 'common/js/dom';
+import { prefixStyle } from 'utils';
 
 const progressBtnWidth = 16;
 const transform = prefixStyle('transform');
@@ -60,7 +60,7 @@ export default {
       this._handleProgressOffset(offsetWidth);
       this.$emit('changing', this._getPercent())
     },
-    onTouchEnd(e) {
+    onTouchEnd() {
       this.touch.initiated = false;
       this._handlerTriggerPercent();
     },

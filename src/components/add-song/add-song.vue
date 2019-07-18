@@ -49,14 +49,14 @@
 
 <script type="text/ecmascript-6">
 import { mapGetters, mapActions } from 'vuex';
-import { searchMixin } from 'common/js/mixin';
+import searchMixin from 'mixins/search';
 import Scroll from 'base/scroll/scroll';
 import Suggest from 'components/suggest/suggest';
 import SongList from 'base/song-list/song-list';
 import SearchBar from 'base/search-bar/search-bar';
 import SearchList from 'base/search-list/search-list';
 import Switches from 'base/switches/switches';
-import Song from 'common/js/song';
+import Song from 'constants/Song';
 import notification from 'base/notification/notification'
 
 export default {

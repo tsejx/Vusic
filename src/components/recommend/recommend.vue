@@ -47,11 +47,11 @@
 <script type="ecmascript-6">
 import { mapMutations } from 'vuex';
 import { ERR_OK } from 'api/config';
-import { getRecommend, getDiscList } from 'api/recommend';
+import { getRecommend } from 'api/recommend';
 import Scroll from 'base/scroll/scroll';
 import Slider from 'base/slider/slider';
 import Loading from 'base/loading/loading';
-import { playlistMixin } from 'common/js/mixin';
+import playlistMixin from 'mixins/playlist';
 
 export default {
   components: {

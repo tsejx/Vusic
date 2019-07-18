@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import { debounce } from 'common/js/util';
+import { debounce } from 'utils';
 
 export default {
   data() {

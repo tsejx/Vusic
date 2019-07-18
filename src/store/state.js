@@ -1,5 +1,5 @@
-import { playMode } from 'common/js/config';
-import { loadSearchHistroy } from 'common/js/cache';
+import { playMode } from 'constants/config';
+import { loadSearchHistroy } from 'utils/cache';
 
 const state = {
   // 最近查看歌手信息

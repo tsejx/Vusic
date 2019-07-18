@@ -31,7 +31,7 @@
 import { mapMutations } from 'vuex';
 import { ERR_OK } from 'api/config';
 import { getTopList } from 'api/rank';
-import { playlistMixin } from 'common/js/mixin';
+import playlistMixin from 'mixins/playlist';
 import Scroll from 'base/scroll/scroll';
 import Loading from 'base/loading/loading';
 

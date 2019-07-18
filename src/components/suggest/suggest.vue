@@ -22,6 +22,7 @@
           <p class="suggest-text" v-html="getDisplayName(item)"></p>
         </div>
       </li>
+      <loading v-show="hasMore" title></loading>
     </ul>
     <div class="no-result-wrapper">
       <no-result class="no-result-wrapper" title="抱歉，暂无搜索结果" v-show="!hasMore && !dataList.length"></no-result>
@@ -33,8 +34,8 @@
 import { mapMutations, mapActions } from 'vuex';
 import { ERR_OK } from 'api/config';
 import { searchMusic } from 'api/search';
-import Singer from 'common/js/singer';
-import { createSong, isValidMusic, injectSongUrl } from 'common/js/song';
+import Singer from 'constants/Singer';
+import { createSong, isValidMusic, injectSongUrl } from 'constants/Song';
 import Scroll from 'base/scroll/scroll';
 import Loading from 'base/loading/loading';
 import NoResult from 'base/no-result/no-result';
@@ -46,6 +47,7 @@ export default {
   components: {
     Scroll,
     NoResult,
+    Loading,
   },
 
   props: {
@@ -68,12 +70,12 @@ export default {
     };
   },
   watch: {
-    searchText(k) {
+    searchText() {
       this.onSearch();
     },
   },
   methods: {
-    handleSongSelect(item, index) {
+    handleSongSelect(item) {
       if (item.type === TYPE_SINGER) {
         const singer = new Singer({
           id: item.singermid,

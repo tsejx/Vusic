@@ -31,7 +31,7 @@
 </template>
 <script type="text/ecmascript-6">
 import { mapGetters, mapActions } from 'vuex';
-import { playlistMixin } from 'common/js/mixin';
+import playlistMixin from 'mixins/playlist';
 import Scroll from 'base/scroll/scroll';
 import Switches from 'base/switches/switches';
 import SongList from 'base/song-list/song-list';

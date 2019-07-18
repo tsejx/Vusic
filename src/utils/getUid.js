@@ -1,6 +1,6 @@
 let _uid = ''
 
-export function getUid () {
+export default function getUid () {
   if (_uid) {
     return _uid
   }

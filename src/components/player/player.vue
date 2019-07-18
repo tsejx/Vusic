@@ -153,10 +153,9 @@
 import { mapGetters, mapMutations, mapActions } from 'vuex';
 import animations from 'create-keyframe-animation';
 import Lyric from 'lyric-parser';
-import { prefixStyle } from 'common/js/dom';
-import { playMode } from 'common/js/config';
-import { shuffle } from 'common/js/util';
-import { playerMixin } from 'common/js/mixin';
+import { prefixStyle } from 'utils';
+import { playMode } from 'constants/config';
+import playerMixin from 'mixins/player';
 import Scroll from 'base/scroll/scroll';
 import ProgressBar from 'base/progress-bar/progress-bar';
 import ProgressCircle from 'base/progress-circle/progress-circle';
@@ -164,6 +163,8 @@ import PlayList from 'components/play-list/play-list';
 
 const transform = prefixStyle('transform');
 const transitionDuration = prefixStyle('transitionDuration');
+
+const timeExp = /\[(\d{2}):(\d{2}):(\d{2})]/g;
 
 export default {
   components: {
@@ -202,14 +203,7 @@ export default {
     percent() {
       return this.currentTime / this.currentSong.duration;
     },
-    ...mapGetters([
-      'isFullScreen',
-      'playlist',
-      'playing',
-      'currentIndex',
-      'mode',
-      'sequenceList',
-    ]),
+    ...mapGetters(['isFullScreen', 'playlist', 'playing', 'currentIndex', 'mode', 'sequenceList']),
   },
   watch: {
     currentSong(newSong, oldSong) {
@@ -355,7 +349,7 @@ export default {
     updateTime(e) {
       this.currentTime = e.target.currentTime;
     },
-    onProgressChanging() {
+    onProgressChanging(percent) {
       this.currentTime = this.currentSong.duration * percent;
       if (this.currentLyric) {
         this.currentLyric.seek(this.currentTime * 1000);
@@ -506,7 +500,7 @@ export default {
       this.$refs.recordCover.style.opacity = 1 - this.touch.percent;
       this.$refs.recordCover.style[transitionDuration] = 0;
     },
-    onTouchEnd(e) {
+    onTouchEnd() {
       if (!this.touch.moved) {
         return;
       }

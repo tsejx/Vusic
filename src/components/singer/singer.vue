@@ -10,8 +10,8 @@
 import { mapMutations } from 'vuex';
 import { ERR_OK } from 'api/config';
 import { getSingerList } from 'api/singer';
-import Singer from 'common/js/singer';
-import { playlistMixin } from 'common/js/mixin';
+import Singer from 'constants/Singer';
+import playlistMixin from 'mixins/playlist';
 import ListView from 'base/listview/listview';
 
 const HOT_NAME = '热门';

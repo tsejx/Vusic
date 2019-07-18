@@ -1,4 +1,4 @@
-import jsonp from 'common/js/jsonp'
+import { jsonp } from 'utils'
 import { commonParams, options } from './config'
 import axios from 'axios'
 

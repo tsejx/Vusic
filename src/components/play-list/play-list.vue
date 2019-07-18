@@ -51,8 +51,8 @@
 
 <script>
 import { mapGetters, mapMutations, mapActions } from 'vuex';
-import { playMode } from 'common/js/config';
-import { playerMixin } from 'common/js/mixin';
+import { playMode } from 'constants/config';
+import playerMixin from 'mixins/player';
 import Scroll from 'base/scroll/scroll';
 import Confirm from 'base/confirm/confirm';
 import AddSong from 'components/add-song/add-song'

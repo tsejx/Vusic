@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { commonParams } from './config';
 import { ERR_OK } from './config';
-import { getUid } from 'common/js/uid';
+import { getUid } from 'utils';
 
 export function getLyric(mid) {
   const url = '/api/lyric';

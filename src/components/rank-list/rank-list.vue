@@ -8,7 +8,7 @@
 import { mapGetters } from 'vuex';
 import { ERR_OK } from 'api/config';
 import { getMusicList } from 'api/rank';
-import { createSong, isValidMusic, injectSongUrl } from 'common/js/song';
+import { createSong, isValidMusic, injectSongUrl } from 'constants/Song';
 import MusicList from 'components/music-list/music-list';
 
 export default {

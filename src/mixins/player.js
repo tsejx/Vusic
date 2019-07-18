@@ -1,30 +1,8 @@
 import { mapGetters, mapMutations, mapActions } from 'vuex';
-import { playMode } from 'common/js/config';
-import { shuffle } from 'common/js/util';
+import { playMode } from 'constants/config';
+import { shuffle } from 'utils';
 
-export const playlistMixin = {
-  computed: {
-    ...mapGetters(['playlist']),
-  },
-  mounted() {
-    this.handlePlayList(this.playlist);
-  },
-  activated() {
-    this.handlePlayList(this.playlist);
-  },
-  watch: {
-    playlist(newVal) {
-      this.handlePlayList(newVal);
-    },
-  },
-  methods: {
-    handlePlayList() {
-      throw new Error('component must implement handlePlayList method');
-    },
-  },
-};
-
-export const playerMixin = {
+export default {
   computed: {
     modeIcon() {
       return this.mode === playMode.sequence
@@ -80,32 +58,5 @@ export const playerMixin = {
       setPlayingState: 'SET_PLAYING_STATE',
     }),
     ...mapActions(['saveFavoriteList', 'deleteFavoriteList']),
-  },
-};
-
-export const searchMixin = {
-  data() {
-    return {
-      searchText: '',
-      refreshDelay: 120,
-    };
-  },
-  computed: {
-    ...mapGetters(['searchHistory']),
-  },
-  methods: {
-    onSearch(text) {
-      this.searchText = text.trim();
-    },
-    onInputBlur() {
-      this.$refs.searchBar.onBlur();
-    },
-    onHotKeySelect(text) {
-      this.$refs.searchBar.onChange(text);
-    },
-    onSaveHistory() {
-      this.saveSearchHistory(this.searchText);
-    },
-    ...mapActions(['saveSearchHistory', 'deleteSearchHistory']),
   },
 };

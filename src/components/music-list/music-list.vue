@@ -37,8 +37,8 @@
 
 <script type="text/ecmascript-6">
 import { mapActions } from 'vuex';
-import { prefixStyle } from 'common/js/dom';
-import { playlistMixin } from 'common/js/mixin';
+import { prefixStyle } from 'utils';
+import playlistMixin from 'mixins/playlist';
 import Scroll from 'base/scroll/scroll';
 import SongList from 'base/song-list/song-list';
 import Loading from 'base/loading/loading';
@@ -62,7 +62,9 @@ export default {
     },
     songs: {
       type: Array,
-      default: [],
+      default(){
+        return []
+      },
     },
     title: {
       type: String,
@@ -97,7 +99,7 @@ export default {
       } else {
         blur = Math.min(20, percent * 20);
       }
-      this.$refs.layer.style[transform] = `translate3d(0, ${newVal}px, 0)`;
+      this.$refs.layer.style[transform] = `translate3d(0, ${translateY}px, 0)`;
       this.$refs.filter.style[backdrop] = `blur(${blur}px)`;
       if (newVal < this.minTranslateY) {
         zIndex = 10;

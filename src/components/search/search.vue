@@ -51,7 +51,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions } from 'vuex';
 import { ERR_OK } from 'api/config';
 import { getHotKey } from 'api/search';
 import Confirm from 'base/confirm/confirm';
@@ -59,7 +59,8 @@ import Scroll from 'base/scroll/scroll';
 import SearchBar from 'base/search-bar/search-bar';
 import SearchList from 'base/search-list/search-list';
 import Suggest from 'components/suggest/suggest';
-import { playlistMixin, searchMixin } from 'common/js/mixin';
+import playlistMixin from 'mixins/playlist';
+import searchMixin from 'mixins/search'
 
 export default {
   components: {
