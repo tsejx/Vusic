@@ -8,7 +8,7 @@
         <switches :options="switchOptions" :currentIndex="currentIndex" @switch="onSwitchItem"></switches>
       </div>
       <div class="play-button" ref="playBtn" @click="onRandom">
-        <i class="icon-play"></i>
+        <i class="micon-play"></i>
         <span class="text">随机播放全部</span>
       </div>
       <div class="list-wrapper" ref="listWrapper">
@@ -146,7 +146,7 @@ export default {
     border-radius: 100px;
     font-size: 0;
 
-    .icon-play {
+    .micon-play {
       display: inline-block;
       vertical-align: middle;
       margin-right: 6px;

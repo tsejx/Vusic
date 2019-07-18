@@ -110,7 +110,7 @@ export default {
     },
     getCurrentIcon(item) {
       if (this.currentSong.id === item.id) {
-        return 'icon-play';
+        return 'micon-play';
       }
       return '';
     },
@@ -166,7 +166,7 @@ export default {
   top: 0;
   bottom: 0;
   z-index: 200;
-  background-color: $color-bg-d;
+  background-color: $mask-background-color;
 
   &.list-fade-enter-active, &.list-fade-leave-active {
     transition: opacity 0.3s;
@@ -266,7 +266,7 @@ export default {
           color: $;
 
           .icon-favorite {
-            color: $color-sub-theme;
+            color: $theme-color;
           }
         }
 

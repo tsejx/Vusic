@@ -38,7 +38,7 @@
         ></suggest>
       </div>
       <notification ref="notification">
-        <div class="tip-title">
+        <div class="notification-title">
           <i class="icon-ok"></i>
           <span class="text">1首歌曲已经添加到播放列表</span>
         </div>
@@ -101,14 +101,14 @@ export default {
     },
     onSelectSuggest() {
       this.onSaveHistory()
-      this.showNitification()
+      this.showNotification()
     },
     onSelectSong(song, index) {
       if (index !== 0) {
         this.insertSong(new Song(song));
       }
     },
-    showNitification() {
+    showNotification() {
       this.$refs.notification.show()
     },
     ...mapActions(['clearSearchHistory', 'insertSong']),
@@ -199,7 +199,7 @@ export default {
     width: 100%;
   }
 
-  .tip-title {
+  .notification-title {
     text-align: center;
     padding: 18px 0;
     font-size: 0;
@@ -212,7 +212,7 @@ export default {
 
     .text {
       font-size: $font-size-md;
-      color: $color-text;
+      color: $text-color;
     }
   }
 }

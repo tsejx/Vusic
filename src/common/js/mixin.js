@@ -28,10 +28,10 @@ export const playerMixin = {
   computed: {
     modeIcon() {
       return this.mode === playMode.sequence
-        ? 'icon-sequence'
+        ? 'micon-sequence'
         : this.mode === playMode.loop
-        ? 'icon-loop'
-        : 'icon-random';
+        ? 'micon-loop'
+        : 'micon-random';
     },
     ...mapGetters(['playlist', 'currentSong', 'mode', 'sequenceList', 'favoriteList']),
   },

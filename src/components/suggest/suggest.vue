@@ -111,7 +111,7 @@ export default {
     },
     iconCls(item) {
       if (item.type === TYPE_SINGER) {
-        return 'icon-mine';
+        return 'icon-singer';
       } else {
         return 'icon-music';
       }

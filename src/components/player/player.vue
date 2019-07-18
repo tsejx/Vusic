@@ -85,13 +85,13 @@
               <i :class="modeIcon"></i>
             </div>
             <div class="icon i-left" :class="disabeldCls">
-              <i class="icon-prev" @click="onPrev"></i>
+              <i class="micon-prev" @click="onPrev"></i>
             </div>
             <div class="icon i-center" :class="disabeldCls">
               <i :class="playIcon" @click="onToggle"></i>
             </div>
             <div class="icon i-right" :class="disabeldCls">
-              <i class="icon-next" @click="onNext"></i>
+              <i class="micon-next" @click="onNext"></i>
             </div>
             <div class="icon i-right">
               <i
@@ -126,7 +126,7 @@
         </div>
         <div class="control">
           <progress-circle :radius="32" :percent="percent">
-            <i class="icon-mini" :class="miniIcon" @click.stop="onToggle"></i>
+            <i class="micon-mini" :class="miniIcon" @click.stop="onToggle"></i>
           </progress-circle>
         </div>
         <div class="control" @click.stop="showPlayList">
@@ -191,10 +191,10 @@ export default {
       return this.playing ? 'play' : '';
     },
     playIcon() {
-      return this.playing ? 'icon-pause' : 'icon-play';
+      return this.playing ? 'micon-pause' : 'micon-play';
     },
     miniIcon() {
-      return this.playing ? 'icon-pause-mini' : 'icon-play-mini';
+      return this.playing ? 'micon-pause-mini' : 'micon-play-mini';
     },
     disabeldCls() {
       return this.canSongPlay ? '' : 'disable';
@@ -789,7 +789,7 @@ export default {
 
         .icon {
           flex: 1;
-          color: $theme-color;
+          color: $theme-color-lg;
 
           &.disable {
             color: $text-color-md;
@@ -818,7 +818,7 @@ export default {
         }
 
         .icon-favorite {
-          color: $color-sub-theme;
+          color: $theme-color;
         }
       }
     }
@@ -907,7 +907,7 @@ export default {
       .desc {
         no-wrap();
         font-size: $font-size-sm;
-        color: $text-color-sm;
+        color: $text-color-md;
       }
     }
 
@@ -916,12 +916,12 @@ export default {
       width: 30px;
       padding: 0 10px;
 
-      .icon-play-mini, .icon-pause-mini, .icon-playlist {
+      .micon-play-mini, .micon-pause-mini, .icon-playlist {
         font-size: 30px;
         color: $theme-color;
       }
 
-      .icon-mini {
+      .micon-mini {
         font-size: 32px;
         position: absolute;
         left: 0;

@@ -194,7 +194,7 @@ export default {
 <style lang="stylus" rel="stylesheet/stylus" scoped>
 @import '~styles/variable';
 
-$header-background = linear-gradient(-225deg, #41B883 0%, #A7DCBF 100%);
+$header-background = linear-gradient(-225deg, #119865 0%, #A7DCBF 100%);
 
 .listview {
   position: relative;

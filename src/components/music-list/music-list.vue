@@ -8,7 +8,7 @@
     <div class="bg-image" :style="bgStyle" ref="bgImage">
       <div class="play-wrapper">
         <div ref="playBtn" v-show="songs.length>0" class="play" @click="onRandomPlay">
-          <i class="icon-play"></i>
+          <i class="micon-play"></i>
           <span class="text">随机播放全部</span>
         </div>
       </div>
@@ -217,7 +217,7 @@ export default {
         border-radius: 100px;
         font-size: 0;
 
-        .icon-play {
+        .micon-play {
           display: inline-block;
           vertical-align: middle;
           margin-right: 6px;

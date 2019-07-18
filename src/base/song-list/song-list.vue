@@ -116,7 +116,7 @@ export default {
       .desc {
         no-wrap();
         margin-top: 4px;
-        color: $text-color-xs;
+        color: $text-color-sm;
         font-size: $font-size-sm;
       }
     }

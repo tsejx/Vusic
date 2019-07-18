@@ -64,7 +64,7 @@ export default {
   top: 0;
   bottom: 0;
   z-index: 998;
-  background-color: $mask-background-color;
+  background-color: $mask-background-color-dark;
 
   &.confirm-fade-enter-active {
     animation: confirm-fadein 0.3s;
