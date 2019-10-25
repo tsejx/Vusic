@@ -10,7 +10,7 @@
 
 ## 本地预览
 
-```bash
+```sh
 # install dependencies
 npm install
 # or
@@ -20,6 +20,14 @@ yarn install
 npm sever
 # or
 yarn server
+```
+
+## 线上运行
+
+使用 [PM2](https://pm2.keymetrics.io/) 守护进程
+
+```sh
+pm2 start prod.server.js
 ```
 
 ## 实现功能
